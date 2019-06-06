@@ -40,6 +40,7 @@ import News from 'bundle-loader?lazy!babel-loader!./pages/staticPages/news/News'
 import FAQ from 'bundle-loader?lazy!babel-loader!./pages/staticPages/faq/FAQ';
 import OQL from 'bundle-loader?lazy!babel-loader!./pages/staticPages/oql/OQL';
 import GroupComparisonPage from 'bundle-loader?lazy!babel-loader!./pages/groupComparison/GroupComparisonPage';
+import DownloadProfileData from 'bundle-loader?lazy!babel-loader!./pages/staticPages/downloadProfileData/DownloadProfileData';
 
 import AppConfig from 'appConfig';
 
@@ -167,6 +168,11 @@ export const makeRoutes = routing => {
                 path="/webAPI"
                 onEnter={handleEnter}
                 getComponent={lazyLoadComponent(WebAPIPage)}
+            />
+            <Route
+                path="/downloadProfileData"
+                onEnter={()=>{$(document).scrollTop(0)}}
+                getComponent={lazyLoadComponent(DownloadProfileData)}
             />
             <Route
                 path="/rmatlab"

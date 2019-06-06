@@ -40,7 +40,7 @@ export function getAlterationSummary(
     numSamples:number, numPatients:number, numAlteredSamples:number, numAlteredPatients:number, numGenes:number
 ) {
     const prefix = `Queried gene${numGenes !== 1 ? "s are" : " is"} altered in`;
-    const sampleSummaryPrefix = `${numAlteredSamples} (${getPercentage(numAlteredSamples/numSamples, 0)}) of queried`;
+    const sampleSummaryPrefix = `${numAlteredSamples} (${getPercentage(numAlteredSamples/numSamples, 1)}) of queried`;
     if (numSamples !== numPatients) {
         // note that by the pigeonhole principle, its not possible to have same number of samples and patients and
         //  for there to be more than one sample in a single patient. thus in the case that there are same # of samples
@@ -50,7 +50,7 @@ export function getAlterationSummary(
             <strong style={{display:"flex"}}>
                 <span style={{marginRight: 13}}>{prefix}</span>
                 <table>
-                    <tr><td>&#8226;&nbsp;{`${numAlteredPatients} (${getPercentage(numAlteredPatients/numPatients, 0)}) of queried patients`}</td></tr>
+                    <tr><td>&#8226;&nbsp;{`${numAlteredPatients} (${getPercentage(numAlteredPatients/numPatients, 1)}) of queried patients`}</td></tr>
                     <tr><td>&#8226;&nbsp;{`${sampleSummaryPrefix} samples`}</td></tr>
                 </table>
             </strong>

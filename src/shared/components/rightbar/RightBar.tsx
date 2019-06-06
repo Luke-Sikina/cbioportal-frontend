@@ -57,55 +57,12 @@ export default class RightBar extends React.Component<IRightBarProps, IRightBarS
     }
 
     private getWhatsNew() {
-        if (AppConfig.serverConfig.skin_right_nav_show_whats_new) {
-            if (!_.isEmpty(AppConfig.serverConfig.skin_right_nav_whats_new_blurb)) {
-                return (
-                    <div className="rightBarSection">
-                        <h3>What's New</h3>
-                        <div dangerouslySetInnerHTML={{__html:AppConfig.serverConfig.skin_right_nav_whats_new_blurb!}}></div>
-                    </div>
-                );
-            } else {
-                let Timeline = require('react-twitter-widgets').Timeline;
-                return (
-                    <div className="rightBarSection" style={{paddingBottom:20}}>
-                        <h3 style={{borderBottom:0}}>
-                            What's New
-                            <a href="http://www.twitter.com/cbioportal" className="pull-right">
-                                @cbioportal <i className="fa fa-twitter" aria-hidden="true"></i>
-                            </a>
-                        </h3>
-                        <div style={{marginTop:3}}>
-                            <Timeline
-                                dataSource={{
-                                    sourceType: 'profile',
-                                    screenName: 'cbioportal'
-                                }}
-                                options={{
-                                    username: 'cbioportal',
-                                    height: '200',
-                                    chrome: 'noheader%20nofooter',
-                                }}
-                                onLoad={() => this.setState({twitterLoading:false})}
-                            />
-                        </div>
-                        <div>
-                            {this.state.twitterLoading &&
-                                 (<span style={{textAlign:"center"}}><LoadingIndicator isLoading={true} small={true}/></span>) ||
-                                 (
-                                    <div style={{paddingTop:5}}>
-                                        <p style={{textAlign:'center'}}>Sign up for low-volume email news alerts</p>
-                                        <a target="_blank" className="btn btn-default btn-sm" href="http://groups.google.com/group/cbioportal-news/boxsubscribe" style={{width: "100%"}}>Subscribe</a>
-                                     </div>
-                                 )
-                            }
-                        </div>
-                    </div>
-                );
-            }
-        } else {
-            return null;
-        }
+        return (
+            <div className="rightBarSection">
+                <h3>What's New</h3>
+                <div dangerouslySetInnerHTML={{__html:AppConfig.serverConfig.skin_right_nav_whats_new_blurb!}}></div>
+            </div>
+        );
     }
 
     public getExampleSection() {
@@ -207,7 +164,6 @@ export default class RightBar extends React.Component<IRightBarProps, IRightBarS
             <div>
                 { this.getWhatsNew() }
                 { this.getDataSetsSection() }
-                { this.getExampleSection() }
                 { this.getTestimonialsSection() }
             </div>
         );
