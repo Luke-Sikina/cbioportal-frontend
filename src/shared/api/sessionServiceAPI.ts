@@ -13,37 +13,33 @@ export default class sessionServiceAPI {
         return request
                 .get(getVirtualStudyServiceUrl())
                 // @ts-ignore: this method comes from caching plugin and isn't in typing
-                .forceUpdate(true)
                 .then((res:any) => {
                     return res.body;
-                });              
+                });
     }
 
     getVirtualStudy(id:string): Promise<VirtualStudy> {
         return request
                 .get(`${getVirtualStudyServiceUrl()}/${id}`)
                 // @ts-ignore: this method comes from caching plugin and isn't in typing
-                .forceUpdate(true)
                 .then((res:any) => {
                     return res.body;
-                });              
+                });
     }
 
     deleteVirtualStudy(id:string){
         return request
                 .get(`${getVirtualStudyServiceUrl()}/delete/${id}`)
                 // @ts-ignore: this method comes from caching plugin and isn't in typing
-                .forceUpdate(true)
-                             
+
     }
 
     addVirtualStudy(id:string){
         return request
                 .get(`${getVirtualStudyServiceUrl()}/add/${id}`)
                 // @ts-ignore: this method comes from caching plugin and isn't in typing
-                .forceUpdate(true)
     }
-    
+
     saveVirtualStudy(object: any, save: boolean) {
         return request
             .post(getVirtualStudyServiceUrl() + (save ? '/save' : ''))
@@ -69,7 +65,6 @@ export default class sessionServiceAPI {
         return request
             .get(`${getSessionServiceUrl()}/${sessionId}`)
             // @ts-ignore: this method comes from caching plugin and isn't in typing
-            .forceUpdate(true)
             .then((res:any) => {
                 return res.body
             });

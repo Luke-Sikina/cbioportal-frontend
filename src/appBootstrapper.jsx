@@ -30,7 +30,6 @@ import {AppStore} from "./AppStore";
 import {handleLongUrls} from "shared/lib/handleLongUrls";
 import "shared/polyfill/canvasToBlob";
 
-superagentCache(superagent);
 
 // this must occur before we initialize tracking
 // it fixes the hash portion of url when cohort patient list is too long

@@ -3,7 +3,7 @@ import {IServerConfig} from "./IAppConfig";
 const ServerConfigDefaults: Partial<IServerConfig> = {
     app_version:"1.0",
     api_cache_limit:450,
-    disabled_tabs:"",
+    disabled_tabs:"bookmark|network|IGV",
     genomenexus_url:"v1.genomenexus.org",
     g2s_url:"https://g2s.genomenexus.org",
     mycancergenome_show:false,

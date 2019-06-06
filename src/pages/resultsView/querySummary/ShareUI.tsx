@@ -93,7 +93,7 @@ export class ShareUI extends React.Component<IShareUI, {}> {
     }
 
     shortenedUrl(urlData:ShareUrls){
-        const url = urlData.bitlyUrl || urlData.sessionUrl || urlData.fullUrl
+        const url = (urlData.bitlyUrl || urlData.sessionUrl || urlData.fullUrl).replace(".edu/", ".edu:8443/");
         if (!url) {
             throw("URL bookmarking error");
         }

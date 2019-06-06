@@ -49,10 +49,10 @@ header {
 }
 
 #institute-logo {
-    max-height: 35px;
-    max-width:200px;
-    margin-left:10px;
-    opacity:0.5;
+    max-height: 50px;
+    max-width: 300px;
+    margin-left: 10px;
+    opacity: 1;
 }
 
 #rightHeaderContent {
@@ -88,17 +88,17 @@ header {
 }
 
 .userControls .identity {
-    position:absolute; 
+    position:absolute;
     display:none;
-    white-space:nowrap; 
+    white-space:nowrap;
     display:none;
     align-items:center;
     top:-6px;
     right:-7px;
     z-index:2;
     border:1px solid #ddd;
-    padding:5px 10px; 
-    background:#fff; 
+    padding:5px 10px;
+    background:#fff;
     font-size:12px; border-radius:4px
 }
 

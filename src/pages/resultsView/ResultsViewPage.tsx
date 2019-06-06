@@ -297,11 +297,7 @@ export default class ResultsViewPage extends React.Component<IResultsViewPagePro
             {
                 id:ResultsViewTab.NETWORK,
                 hide:()=>{
-                    if (!this.resultsViewPageStore.studies.isComplete) {
-                        return true;
-                    } else {
-                        return this.resultsViewPageStore.studies.result!.length > 1;
-                    }
+                    return true;
                 },
                 getTab: () => {
                     return <MSKTab key={9} id={ResultsViewTab.NETWORK} linkText={'Network'}>

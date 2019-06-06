@@ -12,7 +12,7 @@ type CivicAPIGene = {
 type CivicAPIGeneVariant = {
     name: string;
     id: number;
-    [propName: string]: any; 
+    [propName: string]: any;
 };
 
 type CivicAPIVariant = {
@@ -64,7 +64,7 @@ export default class CivicAPI {
      * Retrieves the gene entries for the ids given, if they are in the Civic API.
      */
     getCivicGenesBatch(ids: string): Promise<Array<ICivicGeneData>> {
-    return request.get('https://civicdb.org/api/genes/' + ids)
+    return request.get('https://127.0.0.1/api/genes/' + ids)
            .query({identifier_type: 'entrez_id'})
            .then((res) => {
                 let response = res.body;
@@ -78,18 +78,18 @@ export default class CivicAPI {
                     id: record.id,
                     name: record.name,
                     description: record.description,
-                    url: 'https://civicdb.org/#/events/genes/'
+                    url: 'https://127.0.0.1/#/events/genes/'
                     + record.id + '/summary',
                     variants: createVariantMap(record.variants)
                 }));
             });
     }
-    
+
     /**
      * Returns a promise that resolves with the variants for the parameters given.
      */
      getVariant(id: number, name: string, geneId: number): Promise<ICivicVariantData> {
-        return request.get('https://civicdb.org/api/variants/' + id)
+        return request.get('https://127.0.0.1/api/variants/' + id)
                .then((res) => {
                    let result = res.body;
                    return {
@@ -97,7 +97,7 @@ export default class CivicAPI {
                        name,
                        geneId,
                        description: result.description,
-                       url: 'https://civicdb.org/#/events/genes/' + geneId +
+                       url: 'https://127.0.0.1/#/events/genes/' + geneId +
                             '/summary/variants/' + id + '/summary#variant',
                        evidence: countEvidenceTypes(result.evidence_items)
                    };
