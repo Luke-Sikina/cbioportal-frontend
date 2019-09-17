@@ -71,6 +71,8 @@ export default class ExpressionWrapper extends React.Component<ExpressionWrapper
     componentWillMount(){
         // initialize selected study state. study is on except if it does not have any data (doesn't appear in data collection)
         this.selectedStudyIds = _.mapValues(this.props.studyMap,(study)=>true);
+        this.applyStudyFilter((study: CancerStudy) => isPanCanStudy(study.studyId))
+        this.panCanButton = true;
     }
 
     svgContainer: SVGElement;
@@ -96,6 +98,10 @@ export default class ExpressionWrapper extends React.Component<ExpressionWrapper
     @observable sortBy: SortOptions = "alphabetic";
 
     @observable isTooltipHovered = false;
+
+    @observable panCanButton = false;
+
+    @observable provisionalButton = false;
 
     // for debugging
     @observable public showMutationType = [];
@@ -515,6 +521,25 @@ export default class ExpressionWrapper extends React.Component<ExpressionWrapper
         }
     }
 
+    @computed
+    private get provisionalButtonStyle() {
+        if (this.provisionalButton) {
+            
+            return {marginRight: 5, border: "#3786C2 2px solid;"};
+        }
+        return {marginRight: 5};
+    }
+    
+    @computed
+    private get panCanButtonStyle() {
+        if (this.panCanButton) {
+            console.log("foo");
+            return {marginRight: 5, border: "#3786C2 2px solid;"};
+        }
+        console.log("bar");
+        return {marginRight: 5}
+    }
+
     @autobind
     private getSvg() {
         return document.getElementById(SVG_ID) as SVGElement | null;
@@ -602,20 +627,32 @@ export default class ExpressionWrapper extends React.Component<ExpressionWrapper
                     { this.studiesWithExpressionData.isComplete && <div>
                         <label>Select studies:</label>&nbsp;
                         <If condition={this.studyTypeCounts.provisional.length > 0}>
-                            <button className="btn btn-default btn-xs" style={{marginRight:5}}
-                                    onClick={() => this.applyStudyFilter((study: CancerStudy) => isTCGAProvStudy(study.studyId))}>
-                                 TCGA Provisional ({this.studyTypeCounts.provisional.length})
+                            <button
+                                className="btn btn-default btn-xs"
+                                style={this.provisionalButtonStyle}
+                                onClick={() => {
+                                    this.applyStudyFilter((study: CancerStudy) => isTCGAProvStudy(study.studyId));
+                                    this.provisionalButton = !this.provisionalButton;
+                                }}
+                                >
+                                TCGA Provisional ({this.studyTypeCounts.provisional.length})
                             </button>
                         </If>
                         <If condition={this.studyTypeCounts.panCancer.length > 0}>
-                            <button className="btn btn-default btn-xs" style={{marginRight:5}}
-                                    onClick={() => this.applyStudyFilter((study: CancerStudy) => isPanCanStudy(study.studyId))}>
+                            <button
+                                className="btn btn-default btn-xs"
+                                style={this.panCanButtonStyle}
+                                onClick={() => {
+                                    this.applyStudyFilter((study: CancerStudy) => isPanCanStudy(study.studyId));
+                                    this.panCanButton = !this.panCanButton;
+                                    console.log(this.panCanButton);
+                                }}
+                            >
                                 TCGA Pan-Can Atlas ({this.studyTypeCounts.panCancer.length})
                             </button>
                         </If>
                         <button data-test="ExpressionStudyModalButton"className="btn btn-default btn-xs"
                                 onClick={() => this.studySelectorModalVisible = !this.studySelectorModalVisible}>Custom list</button>
-
                     </div>}
                     { this.studiesWithExpressionData.isPending && <LoadingIndicator isLoading={true} />}
 
