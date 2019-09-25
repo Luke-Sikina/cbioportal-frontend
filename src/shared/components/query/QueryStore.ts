@@ -1798,7 +1798,7 @@ export class QueryStore {
   }
 
   private readonly dict_molecularAlterationType_filenameSuffix: {
-    [K in MolecularProfile["molecularAlterationType"]]?: string
+    [K in MolecularProfile["molecularAlterationType"]]?: string;
   } = {
     MUTATION_EXTENDED: "mutations",
     COPY_NUMBER_ALTERATION: "cna",

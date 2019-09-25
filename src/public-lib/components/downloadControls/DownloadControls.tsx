@@ -150,7 +150,7 @@ export default class DownloadControls extends React.Component<
   }
 
   @computed get downloadControlsButtons(): {
-    [button in DownloadControlsButton]: ButtonSpec
+    [button in DownloadControlsButton]: ButtonSpec;
   } {
     return {
       SVG: {
