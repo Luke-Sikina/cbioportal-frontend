@@ -1,21 +1,13 @@
-import * as MrnaExprColumnFormatter from './MrnaExprColumnFormatter';
-import React from 'react';
-import { assert } from 'chai';
-import { shallow, mount } from 'enzyme';
-import sinon from 'sinon';
+import * as MrnaExprColumnFormatter from "./MrnaExprColumnFormatter";
+import React from "react";
+import { assert } from "chai";
+import { shallow, mount } from "enzyme";
+import sinon from "sinon";
 
-describe('MrnaExprColumnFormatter', () => {
+describe("MrnaExprColumnFormatter", () => {
+  before(() => {});
 
-    before(()=>{
+  after(() => {});
 
-    });
-
-    after(()=>{
-
-    });
-
-    it('what does it do?', ()=>{
-
-    });
-
+  it("what does it do?", () => {});
 });

@@ -1,62 +1,71 @@
-import AnnotationColumnFormatter from './AnnotationColumnFormatter';
-import React from 'react';
-import { assert } from 'chai';
-import { shallow, mount } from 'enzyme';
-import sinon from 'sinon';
-import {getCivicGenes, getCnaCivicVariants, getCnaData, getExpectedCnaCivicEntry, getCnaCivicEmptyVariants} from "test/CivicMockUtils";
-import {ICivicEntry} from "shared/model/Civic";
+import AnnotationColumnFormatter from "./AnnotationColumnFormatter";
+import React from "react";
+import { assert } from "chai";
+import { shallow, mount } from "enzyme";
+import sinon from "sinon";
+import {
+  getCivicGenes,
+  getCnaCivicVariants,
+  getCnaData,
+  getExpectedCnaCivicEntry,
+  getCnaCivicEmptyVariants
+} from "test/CivicMockUtils";
+import { ICivicEntry } from "shared/model/Civic";
 
-describe('AnnotationColumnFormatter', () => {
+describe("AnnotationColumnFormatter", () => {
+  before(() => {});
 
-    before(()=>{
+  after(() => {});
 
-    });
+  it("properly creates a civic entry", () => {
+    let civicGenes = getCivicGenes();
 
-    after(()=>{
+    let civicVariants = getCnaCivicVariants();
 
-    });
+    let cna = getCnaData();
 
-    it('properly creates a civic entry', () => {
+    let expectedCivicEntry = getExpectedCnaCivicEntry();
 
-        let civicGenes = getCivicGenes();
+    assert.deepEqual(
+      AnnotationColumnFormatter.getCivicEntry(cna, civicGenes, civicVariants),
+      expectedCivicEntry,
+      "Equal Civic Entry"
+    );
+  });
 
-        let civicVariants = getCnaCivicVariants();
-        
-        let cna = getCnaData();
+  it("properly points that Civic has variants", () => {
+    let civicGenes = getCivicGenes();
 
-        let expectedCivicEntry = getExpectedCnaCivicEntry();
+    let civicVariants = getCnaCivicVariants();
 
-        assert.deepEqual(
-            AnnotationColumnFormatter.getCivicEntry(cna, civicGenes, civicVariants), expectedCivicEntry,
-            'Equal Civic Entry');
+    let cna = getCnaData();
 
-    });
-    
-    it('properly points that Civic has variants', () => {
-        
-        let civicGenes = getCivicGenes();
+    assert.deepEqual(
+      AnnotationColumnFormatter.hasCivicVariants(
+        cna,
+        civicGenes,
+        civicVariants
+      ),
+      true,
+      "Civic has variants"
+    );
+  });
 
-        let civicVariants = getCnaCivicVariants();
-        
-        let cna = getCnaData();
-        
-        assert.deepEqual(
-            AnnotationColumnFormatter.hasCivicVariants(cna, civicGenes, civicVariants), true,
-            'Civic has variants');
-    });
-    
-    it('properly points that Civic has no variants', () => {
-        
-        let civicGenes = getCivicGenes();
+  it("properly points that Civic has no variants", () => {
+    let civicGenes = getCivicGenes();
 
-        let civicVariants = getCnaCivicEmptyVariants();
-        
-        let cna = getCnaData();
-        
-        assert.deepEqual(
-            AnnotationColumnFormatter.hasCivicVariants(cna, civicGenes, civicVariants), false,
-            'Civic has no variants');
-    });
+    let civicVariants = getCnaCivicEmptyVariants();
 
+    let cna = getCnaData();
 
+    assert.deepEqual(
+      AnnotationColumnFormatter.hasCivicVariants(
+        cna,
+        civicGenes,
+        civicVariants
+      ),
+      false,
+      "Civic has no variants"
+    );
+  });
 });

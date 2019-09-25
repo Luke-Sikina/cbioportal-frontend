@@ -1,21 +1,13 @@
-import * as CosmicMutationTable from './CosmicMutationTable';
-import React from 'react';
-import { assert } from 'chai';
-import { shallow, mount } from 'enzyme';
-import sinon from 'sinon';
+import * as CosmicMutationTable from "./CosmicMutationTable";
+import React from "react";
+import { assert } from "chai";
+import { shallow, mount } from "enzyme";
+import sinon from "sinon";
 
-describe('CosmicMutationTable', () => {
+describe("CosmicMutationTable", () => {
+  before(() => {});
 
-    before(()=>{
+  after(() => {});
 
-    });
-
-    after(()=>{
-
-    });
-
-    it('what does it do?', ()=>{
-
-    });
-
+  it("what does it do?", () => {});
 });

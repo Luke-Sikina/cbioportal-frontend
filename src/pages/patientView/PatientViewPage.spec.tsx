@@ -1,66 +1,65 @@
-import  PatientViewPage from './PatientViewPage';
-import React from 'react';
-import {assert} from 'chai';
-import {shallow, mount} from 'enzyme';
-import sinon from 'sinon';
+import PatientViewPage from "./PatientViewPage";
+import React from "react";
+import { assert } from "chai";
+import { shallow, mount } from "enzyme";
+import sinon from "sinon";
 
-const componentUnderTest: PatientViewPage = (PatientViewPage as any).wrappedComponent;
+const componentUnderTest: PatientViewPage = (PatientViewPage as any)
+  .wrappedComponent;
 
+describe("PatientViewPage", () => {
+  describe("handleSampleClick", () => {
+    const handleSampleClick = (componentUnderTest as any).prototype
+      .handleSampleClick;
 
-describe('PatientViewPage', () => {
+    let updateRouteStub: sinon.SinonStub,
+      preventDefaultStub: sinon.SinonStub,
+      mock: any,
+      ev: Partial<React.MouseEvent<HTMLAnchorElement>>;
 
-    describe('handleSampleClick', () => {
+    beforeEach(() => {
+      updateRouteStub = sinon.stub();
+      preventDefaultStub = sinon.stub();
 
-        const handleSampleClick = (componentUnderTest as any).prototype.handleSampleClick;
+      mock = {
+        props: {
+          routing: {
+            updateRoute: updateRouteStub
+          }
+        }
+      };
 
-        let updateRouteStub: sinon.SinonStub, preventDefaultStub: sinon.SinonStub, mock: any, ev: Partial<React.MouseEvent<HTMLAnchorElement>>;
+      ev = {
+        preventDefault: preventDefaultStub,
+        altKey: false
+      };
+    });
 
-        beforeEach(() => {
-            updateRouteStub = sinon.stub();
-            preventDefaultStub = sinon.stub();
+    it("calls update route when no modifier keys are pressed", () => {
+      handleSampleClick.call(mock, 1, ev);
+      assert.isTrue(updateRouteStub.calledOnce);
+      assert.isTrue(preventDefaultStub.called);
+    });
 
-            mock = {
-                props: {
-                    routing: {
-                        updateRoute: updateRouteStub
-                    }
-                }
-            };
+    it("does not call updateRoute or preventDefault if altKey is true", () => {
+      ev.altKey = true;
+      handleSampleClick.call(mock, 1, ev);
+      assert.isFalse(updateRouteStub.called);
+      assert.isFalse(preventDefaultStub.called);
+    });
 
-            ev = {
-                preventDefault: preventDefaultStub,
-                altKey: false,
-            };
-        })
+    it("does not call updateRoute or preventDefault if metaKey is true", () => {
+      ev.metaKey = true;
+      handleSampleClick.call(mock, 1, ev);
+      assert.isFalse(updateRouteStub.called);
+      assert.isFalse(preventDefaultStub.called);
+    });
 
-        it('calls update route when no modifier keys are pressed', () => {
-            handleSampleClick.call(mock, 1, ev);
-            assert.isTrue(updateRouteStub.calledOnce);
-            assert.isTrue(preventDefaultStub.called);
-        });
-
-        it('does not call updateRoute or preventDefault if altKey is true', () => {
-            ev.altKey = true;
-            handleSampleClick.call(mock, 1, ev);
-            assert.isFalse(updateRouteStub.called);
-            assert.isFalse(preventDefaultStub.called);
-        });
-
-
-        it('does not call updateRoute or preventDefault if metaKey is true', () => {
-            ev.metaKey = true;
-            handleSampleClick.call(mock, 1, ev);
-            assert.isFalse(updateRouteStub.called);
-            assert.isFalse(preventDefaultStub.called);
-        });
-
-        it('does not call updateRoute or preventDefault if shiftKey is true', () => {
-            ev.shiftKey = true;
-            handleSampleClick.call(mock, 1, ev);
-            assert.isFalse(updateRouteStub.called);
-            assert.isFalse(preventDefaultStub.called);
-        });
-
-    })
-
+    it("does not call updateRoute or preventDefault if shiftKey is true", () => {
+      ev.shiftKey = true;
+      handleSampleClick.call(mock, 1, ev);
+      assert.isFalse(updateRouteStub.called);
+      assert.isFalse(preventDefaultStub.called);
+    });
+  });
 });

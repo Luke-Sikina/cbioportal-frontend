@@ -1,21 +1,13 @@
-import * as IEnhancedReactTableProps from './IEnhancedReactTableProps';
-import React from 'react';
-import { assert } from 'chai';
-import { shallow, mount } from 'enzyme';
-import sinon from 'sinon';
+import * as IEnhancedReactTableProps from "./IEnhancedReactTableProps";
+import React from "react";
+import { assert } from "chai";
+import { shallow, mount } from "enzyme";
+import sinon from "sinon";
 
-describe('IEnhancedReactTableProps', () => {
+describe("IEnhancedReactTableProps", () => {
+  before(() => {});
 
-    before(()=>{
+  after(() => {});
 
-    });
-
-    after(()=>{
-
-    });
-
-    it('what does it do?', ()=>{
-
-    });
-
+  it("what does it do?", () => {});
 });

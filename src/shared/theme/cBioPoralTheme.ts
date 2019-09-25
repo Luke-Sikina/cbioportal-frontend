@@ -10,12 +10,12 @@ const lightGreen500 = "#8BC34A";
 const teal700 = "#00796B";
 const cyan900 = "#006064";
 const colors = [
-    deepOrange600,
-    yellow200,
-    lime300,
-    lightGreen500,
-    teal700,
-    cyan900
+  deepOrange600,
+  yellow200,
+  lime300,
+  lightGreen500,
+  teal700,
+  cyan900
 ];
 const blueGrey50 = "#ECEFF1";
 const blueGrey300 = "#90A4AE";
@@ -32,31 +32,32 @@ const fontSize = 13;
 // *
 const padding = 8;
 const baseProps = {
-    fontFamily: sansSerif,
-    width: 350,
-    height: 350,
-    padding: 50
+  fontFamily: sansSerif,
+  width: 350,
+  height: 350,
+  padding: 50
 };
 // *
 // * Labels
 // *
 export const baseLabelStyles = {
-    fontFamily: sansSerif,
-    fontSize,
-    letterSpacing,
-    padding,
-    stroke: "transparent",
-    strokeWidth: 0
+  fontFamily: sansSerif,
+  fontSize,
+  letterSpacing,
+  padding,
+  stroke: "transparent",
+  strokeWidth: 0
 };
-
-
 
 const centeredLabelStyles = assign({ textAnchor: "middle" }, baseLabelStyles);
 
-export const axisLabelStyles = assign({}, baseLabelStyles, { fontSize:13, padding })
+export const axisLabelStyles = assign({}, baseLabelStyles, {
+  fontSize: 13,
+  padding
+});
 export const axisTickLabelStyles = assign({}, baseLabelStyles, {
-    fill: "black",
-    padding:2
+  fill: "black",
+  padding: 2
 });
 
 // *
@@ -67,176 +68,218 @@ const strokeLinecap = "round";
 const strokeLinejoin = "round";
 
 const CBIOPORTAL_VICTORY_THEME = {
-    area: assign({
-        style: {
-            data: {
-                fill: grey900
-            },
-            labels: centeredLabelStyles
-        }
-    }, baseProps),
-    axis: assign({
-        style: {
-            axis: {
-                fill: "transparent",
-                stroke: "black",
-                strokeWidth: 1,
-                strokeLinecap,
-                strokeLinejoin
-            },
-            axisLabel: assign({}, centeredLabelStyles, axisLabelStyles),
-            grid: {
-                fill: "none",
-                stroke: blueGrey50,
-                strokeOpacity: (t:number)=>(t === 0 ? 0 : 1),
-                strokeDasharray,
-                strokeLinecap,
-                strokeLinejoin,
-                pointerEvents: "visible"
-            },
-            ticks: {
-                fill: "transparent",
-                size: 4,
-                stroke: "black",
-                strokeWidth: 1,
-                strokeLinecap,
-                strokeLinejoin
-            },
-            tickLabels: axisTickLabelStyles
-        }
-    }, baseProps),
-    bar: assign({
-        style: {
-            data: {
-                fill: blueGrey700,
-                padding,
-                strokeWidth: 0
-            },
-            labels: baseLabelStyles
-        }
-    }, baseProps),
-    boxplot: assign({
-        style: {
-            max: { padding, stroke: blueGrey700, strokeWidth: 1 },
-            maxLabels: baseLabelStyles,
-            median: { padding, stroke: blueGrey700, strokeWidth: 1 },
-            medianLabels: baseLabelStyles,
-            min: { padding, stroke: blueGrey700, strokeWidth: 1 },
-            minLabels: baseLabelStyles,
-            q1: { padding, fill: blueGrey700 },
-            q1Labels: baseLabelStyles,
-            q3: { padding, fill: blueGrey700 },
-            q3Labels: baseLabelStyles
+  area: assign(
+    {
+      style: {
+        data: {
+          fill: grey900
         },
-        boxWidth: 20
-    }, baseProps),
-    candlestick: assign({
-        style: {
-            data: {
-                stroke: blueGrey700
-            },
-            labels: centeredLabelStyles
-        },
-        candleColors: {
-            positive: "#ffffff",
-            negative: blueGrey700
-        }
-    }, baseProps),
-    chart: baseProps,
-    errorbar: assign({
-        borderWidth: 8,
-        style: {
-            data: {
-                fill: "transparent",
-                opacity: 1,
-                stroke: blueGrey700,
-                strokeWidth: 2
-            },
-            labels: centeredLabelStyles
-        }
-    }, baseProps),
-    group: assign({
-        colorScale: colors
-    }, baseProps),
-    line: assign({
-        style: {
-            data: {
-                fill: "transparent",
-                opacity: 1,
-                stroke: blueGrey700,
-                strokeWidth: 2
-            },
-            labels: centeredLabelStyles
-        }
-    }, baseProps),
-    pie: assign({
-        colorScale: colors,
-        style: {
-            data: {
-                padding,
-                stroke: blueGrey50,
-                strokeWidth: 1
-            },
-            labels: assign({}, baseLabelStyles, { padding: 20 })
-        }
-    }, baseProps),
-    scatter: assign({
-        style: {
-            data: {
-                fill: blueGrey700,
-                opacity: 1,
-                stroke: "transparent",
-                strokeWidth: 0
-            },
-            labels: centeredLabelStyles
-        }
-    }, baseProps),
-    stack: assign({
-        colorScale: colors
-    }, baseProps),
-    tooltip: {
-        style: assign({}, centeredLabelStyles, { padding: 5, pointerEvents: "none" }),
-        flyoutStyle: {
-            stroke: grey900,
-            strokeWidth: 1,
-            fill: "#f0f0f0",
-            pointerEvents: "none"
-        },
-        cornerRadius: 5,
-        pointerLength: 10
+        labels: centeredLabelStyles
+      }
     },
-    voronoi: assign({
-        style: {
-            data: {
-                fill: "transparent",
-                stroke: "transparent",
-                strokeWidth: 0
-            },
-            labels: assign({}, centeredLabelStyles, { padding: 5, pointerEvents: "none" }),
-            flyout: {
-                stroke: grey900,
-                strokeWidth: 1,
-                fill: "#f0f0f0",
-                pointerEvents: "none"
-            }
+    baseProps
+  ),
+  axis: assign(
+    {
+      style: {
+        axis: {
+          fill: "transparent",
+          stroke: "black",
+          strokeWidth: 1,
+          strokeLinecap,
+          strokeLinejoin
+        },
+        axisLabel: assign({}, centeredLabelStyles, axisLabelStyles),
+        grid: {
+          fill: "none",
+          stroke: blueGrey50,
+          strokeOpacity: (t: number) => (t === 0 ? 0 : 1),
+          strokeDasharray,
+          strokeLinecap,
+          strokeLinejoin,
+          pointerEvents: "visible"
+        },
+        ticks: {
+          fill: "transparent",
+          size: 4,
+          stroke: "black",
+          strokeWidth: 1,
+          strokeLinecap,
+          strokeLinejoin
+        },
+        tickLabels: axisTickLabelStyles
+      }
+    },
+    baseProps
+  ),
+  bar: assign(
+    {
+      style: {
+        data: {
+          fill: blueGrey700,
+          padding,
+          strokeWidth: 0
+        },
+        labels: baseLabelStyles
+      }
+    },
+    baseProps
+  ),
+  boxplot: assign(
+    {
+      style: {
+        max: { padding, stroke: blueGrey700, strokeWidth: 1 },
+        maxLabels: baseLabelStyles,
+        median: { padding, stroke: blueGrey700, strokeWidth: 1 },
+        medianLabels: baseLabelStyles,
+        min: { padding, stroke: blueGrey700, strokeWidth: 1 },
+        minLabels: baseLabelStyles,
+        q1: { padding, fill: blueGrey700 },
+        q1Labels: baseLabelStyles,
+        q3: { padding, fill: blueGrey700 },
+        q3Labels: baseLabelStyles
+      },
+      boxWidth: 20
+    },
+    baseProps
+  ),
+  candlestick: assign(
+    {
+      style: {
+        data: {
+          stroke: blueGrey700
+        },
+        labels: centeredLabelStyles
+      },
+      candleColors: {
+        positive: "#ffffff",
+        negative: blueGrey700
+      }
+    },
+    baseProps
+  ),
+  chart: baseProps,
+  errorbar: assign(
+    {
+      borderWidth: 8,
+      style: {
+        data: {
+          fill: "transparent",
+          opacity: 1,
+          stroke: blueGrey700,
+          strokeWidth: 2
+        },
+        labels: centeredLabelStyles
+      }
+    },
+    baseProps
+  ),
+  group: assign(
+    {
+      colorScale: colors
+    },
+    baseProps
+  ),
+  line: assign(
+    {
+      style: {
+        data: {
+          fill: "transparent",
+          opacity: 1,
+          stroke: blueGrey700,
+          strokeWidth: 2
+        },
+        labels: centeredLabelStyles
+      }
+    },
+    baseProps
+  ),
+  pie: assign(
+    {
+      colorScale: colors,
+      style: {
+        data: {
+          padding,
+          stroke: blueGrey50,
+          strokeWidth: 1
+        },
+        labels: assign({}, baseLabelStyles, { padding: 20 })
+      }
+    },
+    baseProps
+  ),
+  scatter: assign(
+    {
+      style: {
+        data: {
+          fill: blueGrey700,
+          opacity: 1,
+          stroke: "transparent",
+          strokeWidth: 0
+        },
+        labels: centeredLabelStyles
+      }
+    },
+    baseProps
+  ),
+  stack: assign(
+    {
+      colorScale: colors
+    },
+    baseProps
+  ),
+  tooltip: {
+    style: assign({}, centeredLabelStyles, {
+      padding: 5,
+      pointerEvents: "none"
+    }),
+    flyoutStyle: {
+      stroke: grey900,
+      strokeWidth: 1,
+      fill: "#f0f0f0",
+      pointerEvents: "none"
+    },
+    cornerRadius: 5,
+    pointerLength: 10
+  },
+  voronoi: assign(
+    {
+      style: {
+        data: {
+          fill: "transparent",
+          stroke: "transparent",
+          strokeWidth: 0
+        },
+        labels: assign({}, centeredLabelStyles, {
+          padding: 5,
+          pointerEvents: "none"
+        }),
+        flyout: {
+          stroke: grey900,
+          strokeWidth: 1,
+          fill: "#f0f0f0",
+          pointerEvents: "none"
         }
-    }, baseProps),
-    legend: {
-        colorScale: colors,
-        gutter: 10,
-        orientation: "vertical",
-        titleOrientation: "top",
-        style: {
-            data: {
-                type: "circle",
-                size:3,
-                strokeWidth:1,
-                stroke:"black"
-            },
-            labels: baseLabelStyles,
-            title: assign({}, baseLabelStyles, { padding: 5 })
-        }
+      }
+    },
+    baseProps
+  ),
+  legend: {
+    colorScale: colors,
+    gutter: 10,
+    orientation: "vertical",
+    titleOrientation: "top",
+    style: {
+      data: {
+        type: "circle",
+        size: 3,
+        strokeWidth: 1,
+        stroke: "black"
+      },
+      labels: baseLabelStyles,
+      title: assign({}, baseLabelStyles, { padding: 5 })
     }
+  }
 };
 
 export default CBIOPORTAL_VICTORY_THEME;

@@ -1,29 +1,29 @@
-import {Alignment} from "public-lib/api/generated/Genome2StructureAPI";
+import { Alignment } from "public-lib/api/generated/Genome2StructureAPI";
 
 export interface IPdbPosition {
-    position: number;
-    insertionCode?: string;
+  position: number;
+  insertionCode?: string;
 }
 
 export interface IPdbPositionRange {
-    start: IPdbPosition;
-    end: IPdbPosition;
+  start: IPdbPosition;
+  end: IPdbPosition;
 }
 
 export type PdbAlignmentIndex = {
-    [pdbId: string]: {
-        [chainId: string]: Alignment[]
-    }
+  [pdbId: string]: {
+    [chainId: string]: Alignment[];
+  };
 };
 
 export interface IPdbChain {
-    pdbId: string;
-    chain: string;
-    uniprotStart: number;
-    uniprotEnd: number;
-    alignment: string;
-    identityPerc: number;
-    identity: number;
+  pdbId: string;
+  chain: string;
+  uniprotStart: number;
+  uniprotEnd: number;
+  alignment: string;
+  identityPerc: number;
+  identity: number;
 }
 
 export const ALIGNMENT_GAP = "*";

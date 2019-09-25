@@ -1,21 +1,13 @@
-import * as IColumnFormatter from './IColumnFormatter';
-import React from 'react';
-import { assert } from 'chai';
-import { shallow, mount } from 'enzyme';
-import sinon from 'sinon';
+import * as IColumnFormatter from "./IColumnFormatter";
+import React from "react";
+import { assert } from "chai";
+import { shallow, mount } from "enzyme";
+import sinon from "sinon";
 
-describe('IColumnFormatter', () => {
+describe("IColumnFormatter", () => {
+  before(() => {});
 
-    before(()=>{
+  after(() => {});
 
-    });
-
-    after(()=>{
-
-    });
-
-    it('what does it do?', ()=>{
-
-    });
-
+  it("what does it do?", () => {});
 });
