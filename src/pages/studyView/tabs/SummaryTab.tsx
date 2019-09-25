@@ -52,7 +52,7 @@ export class StudySummaryTab extends React.Component<
   constructor(props: IStudySummaryTabProps) {
     super(props);
     this.store = props.store;
-
+    console.log("howdy");
     this.handlers = {
       onValueSelection: (chartMeta: ChartMeta, values: string[]) => {
         this.store.updateClinicalDataEqualityFilters(chartMeta, values);
