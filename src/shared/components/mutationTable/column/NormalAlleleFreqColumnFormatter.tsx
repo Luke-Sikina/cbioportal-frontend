@@ -1,52 +1,53 @@
-import * as React from 'react';
-import {Mutation} from "shared/api/generated/CBioPortalAPI";
+import * as React from "react";
+import { Mutation } from "shared/api/generated/CBioPortalAPI";
 import TableCellStatusIndicator from "public-lib/components/TableCellStatus";
-import {TableCellStatus} from "public-lib/components/TableCellStatus";
-import TumorAlleleFreqColumnFormatter, {getFormattedFrequencyValue} from "./TumorAlleleFreqColumnFormatter";
+import { TableCellStatus } from "public-lib/components/TableCellStatus";
+import TumorAlleleFreqColumnFormatter, {
+  getFormattedFrequencyValue
+} from "./TumorAlleleFreqColumnFormatter";
 
-export default class NormalAlleleFreqColumnFormatter
-{
-    public static renderFunction(mutations:Mutation[]) {
-        const frequency = NormalAlleleFreqColumnFormatter.getSortValue(mutations);
+export default class NormalAlleleFreqColumnFormatter {
+  public static renderFunction(mutations: Mutation[]) {
+    const frequency = NormalAlleleFreqColumnFormatter.getSortValue(mutations);
 
-        if (frequency) {
-            const altReads = mutations[0].normalAltCount;
-            const refReads = mutations[0].normalRefCount;
+    if (frequency) {
+      const altReads = mutations[0].normalAltCount;
+      const refReads = mutations[0].normalRefCount;
 
-            return TumorAlleleFreqColumnFormatter.mainContent(frequency, altReads, refReads);
-        }
-        else {
-            return (
-                <TableCellStatusIndicator status={TableCellStatus.NA} />
-            );
-        }
+      return TumorAlleleFreqColumnFormatter.mainContent(
+        frequency,
+        altReads,
+        refReads
+      );
+    } else {
+      return <TableCellStatusIndicator status={TableCellStatus.NA} />;
+    }
+  }
+
+  public static getTextValue(mutations: Mutation[]): string {
+    const frequency = NormalAlleleFreqColumnFormatter.getSortValue(mutations);
+
+    if (frequency) {
+      return getFormattedFrequencyValue(frequency);
     }
 
-    public static getTextValue(mutations:Mutation[]) : string {
-        const frequency = NormalAlleleFreqColumnFormatter.getSortValue(mutations);
+    return "";
+  }
 
-        if (frequency) {
-            return getFormattedFrequencyValue(frequency);
-        }
+  public static getSortValue(mutations: Mutation[]) {
+    const mutation = mutations[0];
 
-        return "";
+    if (!mutation) {
+      return null;
     }
 
-    public static getSortValue(mutations:Mutation[])
-    {
-        const mutation = mutations[0];
+    const altReads = mutation.normalAltCount;
+    const refReads = mutation.normalRefCount;
 
-        if (!mutation) {
-            return null;
-        }
-
-        const altReads = mutation.normalAltCount;
-        const refReads = mutation.normalRefCount;
-
-        if ((altReads < 0) || (refReads < 0)) {
-            return null;
-        }
-
-        return (altReads / (altReads + refReads));
+    if (altReads < 0 || refReads < 0) {
+      return null;
     }
+
+    return altReads / (altReads + refReads);
+  }
 }

@@ -1,75 +1,79 @@
-import {assert} from 'chai';
-import {mount} from "enzyme";
+import { assert } from "chai";
+import { mount } from "enzyme";
 import * as React from "react";
-import GeneSymbolValidator, {IGeneSymbolValidatorProps} from './GeneSymbolValidator';
-import sinon from 'sinon';
+import GeneSymbolValidator, {
+  IGeneSymbolValidatorProps
+} from "./GeneSymbolValidator";
+import sinon from "sinon";
 
-describe('GeneSymbolValidator', () => {
+describe("GeneSymbolValidator", () => {
+  let props: IGeneSymbolValidatorProps;
+  let wrapper: any;
+  let instance: GeneSymbolValidator;
 
-    let props: IGeneSymbolValidatorProps;
-    let wrapper: any;
-    let instance: GeneSymbolValidator;
+  beforeEach(() => {
+    props = {
+      oql: {
+        query: [{ gene: "TP53", alterations: false }]
+      },
+      geneQuery: "TP53",
+      skipGeneValidation: false,
+      updateGeneQuery: () => null
+    } as IGeneSymbolValidatorProps;
+    wrapper = mount(<GeneSymbolValidator {...props} />);
+    instance = wrapper.instance() as GeneSymbolValidator;
+  });
+  afterEach(() => {});
 
-    beforeEach(() => {
-        props = {
-            oql: {
-                query: [{gene: 'TP53', alterations: false}]
-            },
-            geneQuery: 'TP53',
-            skipGeneValidation: false,
-            updateGeneQuery: () => null,
-        } as IGeneSymbolValidatorProps;
-        wrapper = mount(<GeneSymbolValidator {...props} />);
-        instance = wrapper.instance() as GeneSymbolValidator;
-    });
-    afterEach(() => {
-    });
-
-    it('Validate geneQuery properly', () => {
-        sinon.stub(instance, 'genes').get(() => {
-            return {
-                status: 'complete',
-                isPending: false,
-                isError: false,
-                isComplete: true,
-                result: {
-                    found: [{
-                        entrezGeneId: 7157,
-                        hugoGeneSymbol: "TP53",
-                        type: "protein-coding",
-                        cytoband: "17p13.1",
-                        length: 19149,
-                        chromosome: "17"
-                    }],
-                    suggestions: []
-                },
-                error: undefined
-            };
-        });
-
-        instance.forceUpdate();
-
-        assert.equal(
-            wrapper.find('#geneBoxValidationStatus').text(),
-            "All gene symbols are valid.");
+  it("Validate geneQuery properly", () => {
+    sinon.stub(instance, "genes").get(() => {
+      return {
+        status: "complete",
+        isPending: false,
+        isError: false,
+        isComplete: true,
+        result: {
+          found: [
+            {
+              entrezGeneId: 7157,
+              hugoGeneSymbol: "TP53",
+              type: "protein-coding",
+              cytoband: "17p13.1",
+              length: 19149,
+              chromosome: "17"
+            }
+          ],
+          suggestions: []
+        },
+        error: undefined
+      };
     });
 
-    it('api error', () => {
-        sinon.stub(instance, 'genes').get(() => {
-            return {
-                status: 'error',
-                isPending: false,
-                isError: true,
-                isComplete: true,
-                result: {found: [], suggestions: []},
-                error: new Error('error')
-            };
-        });
+    instance.forceUpdate();
 
-        instance.forceUpdate();
+    assert.equal(
+      wrapper.find("#geneBoxValidationStatus").text(),
+      "All gene symbols are valid."
+    );
+  });
 
-        assert.equal(
-            wrapper.find('#geneBoxValidationStatus').text(),
-            "Unable to validate gene symbols.");
+  it("api error", () => {
+    sinon.stub(instance, "genes").get(() => {
+      return {
+        status: "error",
+        isPending: false,
+        isError: true,
+        isComplete: true,
+        result: { found: [], suggestions: [] },
+        error: new Error("error")
+      };
     });
+
+    instance.forceUpdate();
+
+    assert.equal(
+      wrapper.find("#geneBoxValidationStatus").text(),
+      "Unable to validate gene symbols."
+    );
+  });
 });

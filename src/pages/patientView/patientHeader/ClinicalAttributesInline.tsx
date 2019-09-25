@@ -1,9 +1,9 @@
-import * as React from 'react';
-import {ClinicalData} from "../../../shared/api/generated/CBioPortalAPI";
+import * as React from "react";
+import { ClinicalData } from "../../../shared/api/generated/CBioPortalAPI";
 
 export type IClinicalAttributesInlineProps = {
-    clinicalData?: ClinicalData;
-    cancerStudyId: string;
+  clinicalData?: ClinicalData;
+  cancerStudyId: string;
 };
 
 //export default class ClinicalAttributesInline extends React.Component<IClinicalAttributesInlineProps, {}> {
@@ -24,9 +24,9 @@ export type IClinicalAttributesInlineProps = {
 //    }
 //}
 
-type IClinicalAttributeProps ={
-    key: string;
-    value: string;
+type IClinicalAttributeProps = {
+  key: string;
+  value: string;
 };
 
 // class ClinicalAttribute extends React.Component<IClinicalAttributeProps, {}> {

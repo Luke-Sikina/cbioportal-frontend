@@ -1,291 +1,327 @@
 import * as React from "react";
-import {observer} from "mobx-react";
-import {Slice, VictoryContainer, VictoryLabel, VictoryLegend, VictoryPie} from 'victory';
-import {action, computed, observable, toJS} from "mobx";
+import { observer } from "mobx-react";
+import {
+  Slice,
+  VictoryContainer,
+  VictoryLabel,
+  VictoryLegend,
+  VictoryPie
+} from "victory";
+import { action, computed, observable, toJS } from "mobx";
 import _ from "lodash";
-import {getFrequencyStr, toSvgDomNodeWithLegend} from "pages/studyView/StudyViewUtils";
+import {
+  getFrequencyStr,
+  toSvgDomNodeWithLegend
+} from "pages/studyView/StudyViewUtils";
 import CBIOPORTAL_VICTORY_THEME from "shared/theme/cBioPoralTheme";
-import {AbstractChart} from "pages/studyView/charts/ChartContainer";
+import { AbstractChart } from "pages/studyView/charts/ChartContainer";
 import ifndef from "shared/lib/ifndef";
-import autobind from 'autobind-decorator';
-import {ClinicalDataCountSummary} from "pages/studyView/StudyViewUtils";
+import autobind from "autobind-decorator";
+import { ClinicalDataCountSummary } from "pages/studyView/StudyViewUtils";
 import ClinicalTable from "pages/studyView/table/ClinicalTable";
-import {If} from 'react-if';
-import {STUDY_VIEW_CONFIG} from "../../StudyViewConfig";
+import { If } from "react-if";
+import { STUDY_VIEW_CONFIG } from "../../StudyViewConfig";
 import DefaultTooltip from "../../../../public-lib/components/defaultTooltip/DefaultTooltip";
-import {getTextWidth} from "../../../../public-lib/lib/TextTruncationUtils";
-import {DEFAULT_NA_COLOR} from "shared/lib/Colors";
+import { getTextWidth } from "../../../../public-lib/lib/TextTruncationUtils";
+import { DEFAULT_NA_COLOR } from "shared/lib/Colors";
 
 export interface IPieChartProps {
-    width: number;
-    height: number;
-    data: ClinicalDataCountSummary[];
-    filters: string[];
-    onUserSelection: (values: string[]) => void;
-    placement: 'left' | 'right';
-    patientAttribute: boolean;
-    label?: string;
-    labelDescription?: string;
+  width: number;
+  height: number;
+  data: ClinicalDataCountSummary[];
+  filters: string[];
+  onUserSelection: (values: string[]) => void;
+  placement: "left" | "right";
+  patientAttribute: boolean;
+  label?: string;
+  labelDescription?: string;
 }
 
 @observer
-export default class PieChart extends React.Component<IPieChartProps, {}> implements AbstractChart {
+export default class PieChart extends React.Component<IPieChartProps, {}>
+  implements AbstractChart {
+  private svg: SVGElement;
 
-    private svg: SVGElement;
+  constructor(props: IPieChartProps) {
+    super(props);
+  }
 
-    constructor(props: IPieChartProps) {
-        super(props);
+  @autobind
+  private onUserSelection(filter: string) {
+    let filters = toJS(this.props.filters);
+    if (_.includes(filters, filter)) {
+      filters = _.filter(filters, obj => obj !== filter);
+    } else {
+      filters.push(filter);
     }
+    this.props.onUserSelection(filters);
+  }
 
-    @autobind
-    private onUserSelection(filter: string) {
-        let filters = toJS(this.props.filters);
-        if (_.includes(filters, filter)) {
-            filters = _.filter(filters, obj => obj !== filter);
-        } else {
-            filters.push(filter);
-        }
-        this.props.onUserSelection(filters);
-    }
+  private get userEvents() {
+    const self = this;
+    return [
+      {
+        target: "data",
+        eventHandlers: this.pieSliceOnClickEventHandlers
+      },
+      {
+        target: "labels",
+        eventHandlers: this.pieSliceOnClickEventHandlers
+      }
+    ];
+  }
 
-    private get userEvents() {
-        const self = this;
-        return [{
+  private get pieSliceOnClickEventHandlers() {
+    return {
+      onClick: () => {
+        return [
+          {
             target: "data",
-            eventHandlers: this.pieSliceOnClickEventHandlers
-        }, {
-            target: "labels",
-            eventHandlers: this.pieSliceOnClickEventHandlers
-        }];
-    }
-
-    private get pieSliceOnClickEventHandlers() {
-        return {
-            onClick: () => {
-                return [
-                    {
-                        target: "data",
-                        mutation: (props: any) => {
-                            this.onUserSelection(props.datum.value);
-                        }
-                    }
-                ];
+            mutation: (props: any) => {
+              this.onUserSelection(props.datum.value);
             }
+          }
+        ];
+      }
+    };
+  }
+
+  @observable isTooltipHovered: boolean = false;
+  @observable tooltipHighlightedRow: string | undefined = undefined;
+
+  @autobind
+  @action
+  private highlightedRow(value: string): void {
+    this.tooltipHighlightedRow = value;
+  }
+
+  public downloadData() {
+    return this.props.data.map(obj => obj.value + "\t" + obj.count).join("\n");
+  }
+
+  public toSVGDOMNode(): Element {
+    return toSvgDomNodeWithLegend(this.svg, {
+      legendGroupSelector: ".studyViewPieChartLegend",
+      chartGroupSelector: ".studyViewPieChartGroup",
+      centerLegend: true
+    });
+  }
+
+  @computed
+  get totalCount() {
+    return _.sumBy(this.props.data, obj => obj.count);
+  }
+
+  @computed
+  get fill() {
+    return (d: ClinicalDataCountSummary) => {
+      if (
+        !_.isEmpty(this.props.filters) &&
+        !_.includes(this.props.filters, d.value)
+      ) {
+        return DEFAULT_NA_COLOR;
+      }
+      return d.color;
+    };
+  }
+
+  @computed
+  get stroke() {
+    return (d: ClinicalDataCountSummary) => {
+      if (
+        !_.isEmpty(this.props.filters) &&
+        _.includes(this.props.filters, d.value)
+      ) {
+        return "#cccccc";
+      }
+      return null;
+    };
+  }
+
+  @computed
+  get strokeWidth() {
+    return (d: ClinicalDataCountSummary) => {
+      if (
+        !_.isEmpty(this.props.filters) &&
+        _.includes(this.props.filters, d.value)
+      ) {
+        return 3;
+      }
+      return 0;
+    };
+  }
+
+  @computed
+  get fillOpacity() {
+    return (d: ClinicalDataCountSummary) => {
+      if (
+        !_.isEmpty(this.props.filters) &&
+        !_.includes(this.props.filters, d.value)
+      ) {
+        return "0.5";
+      }
+      return 1;
+    };
+  }
+
+  @autobind
+  private x(d: ClinicalDataCountSummary) {
+    return d.value;
+  }
+
+  @autobind
+  private y(d: ClinicalDataCountSummary) {
+    return d.count;
+  }
+
+  @autobind
+  private label(d: ClinicalDataCountSummary) {
+    return d.count / this.totalCount > 0.5
+      ? d.count.toLocaleString()
+      : this.maxLength(d.count / this.totalCount, this.pieSliceRadius / 3) <
+        getTextWidth(
+          d.count.toLocaleString(),
+          CBIOPORTAL_VICTORY_THEME.axis.style.tickLabels.fontFamily,
+          `${CBIOPORTAL_VICTORY_THEME.axis.style.tickLabels.fontSize}px`
+        )
+      ? ""
+      : d.count.toLocaleString();
+  }
+
+  // We don't want to show a bigger pie chart when the height is way smaller than width
+  @computed
+  get chartSize() {
+    return (this.props.width + this.props.height) / 2;
+  }
+
+  @computed
+  get pieSliceRadius(): number {
+    const chartWidth =
+      this.props.width > this.props.height
+        ? this.props.height
+        : this.props.width;
+    return chartWidth / 2 - STUDY_VIEW_CONFIG.thresholds.piePadding;
+  }
+
+  @computed
+  get victoryPie() {
+    return (
+      <VictoryPie
+        standalone={false}
+        theme={CBIOPORTAL_VICTORY_THEME}
+        containerComponent={<VictoryContainer responsive={false} />}
+        groupComponent={
+          <g className="studyViewPieChartGroup" transform="translate(0, -12)" />
         }
-    }
+        width={this.props.width}
+        height={this.chartSize}
+        labelRadius={this.pieSliceRadius / 3}
+        radius={this.pieSliceRadius}
+        labels={this.label}
+        data={this.props.data}
+        dataComponent={<CustomSlice />}
+        labelComponent={<VictoryLabel />}
+        events={this.userEvents}
+        style={{
+          data: {
+            fill: ifndef(this.fill, "#cccccc"),
+            stroke: ifndef(this.stroke, "0x000000"),
+            strokeWidth: ifndef(this.strokeWidth, 0),
+            fillOpacity: ifndef(this.fillOpacity, 1),
+            cursor: "pointer"
+          },
+          labels: {
+            fill: "white",
+            cursor: "pointer"
+          }
+        }}
+        x={this.x}
+        y={this.y}
+      />
+    );
+  }
 
-    @observable isTooltipHovered: boolean = false;
-    @observable tooltipHighlightedRow: string | undefined = undefined;
+  @computed
+  get victoryLegend() {
+    const legendData = this.props.data.map(data => ({
+      name: `${data.value}: ${data.count} (${getFrequencyStr(
+        (100 * data.count) / this.totalCount
+      )})`
+    }));
+    const colorScale = this.props.data.map(data => data.color);
 
-    @autobind
-    @action
-    private highlightedRow(value: string): void {
-        this.tooltipHighlightedRow = value;
-    }
+    // override the legend style without mutating the actual theme object
+    const theme = _.cloneDeep(CBIOPORTAL_VICTORY_THEME);
+    theme.legend.style.data = {
+      type: "square",
+      size: 5,
+      strokeWidth: 0,
+      stroke: "black"
+    };
 
-    public downloadData() {
-        return this.props.data.map(obj => obj.value + '\t' + obj.count).join('\n');
-    }
+    return (
+      <VictoryLegend
+        standalone={false}
+        theme={theme}
+        colorScale={colorScale}
+        x={0}
+        y={this.props.height + 1}
+        rowGutter={-10}
+        title={this.props.label || "Legend"}
+        centerTitle={true}
+        style={{ title: { fontWeight: "bold" } }}
+        data={legendData}
+        groupComponent={<g className="studyViewPieChartLegend" />}
+      />
+    );
+  }
 
-    public toSVGDOMNode(): Element {
-        return toSvgDomNodeWithLegend(this.svg, {
-            legendGroupSelector: ".studyViewPieChartLegend",
-            chartGroupSelector: ".studyViewPieChartGroup",
-            centerLegend: true
-        });
-    }
+  private maxLength(ratioOfPie: number, radius: number) {
+    return Math.abs(Math.tan((Math.PI * ratioOfPie) / 2)) * radius * 2;
+  }
 
-    @computed
-    get totalCount() {
-        return _.sumBy(this.props.data, obj => obj.count)
-    }
-
-    @computed
-    get fill() {
-        return (d: ClinicalDataCountSummary) => {
-            if (!_.isEmpty(this.props.filters) && !_.includes(this.props.filters, d.value)) {
-                return DEFAULT_NA_COLOR;
-            }
-            return d.color;
-        };
-    }
-
-    @computed
-    get stroke() {
-        return (d: ClinicalDataCountSummary) => {
-            if (!_.isEmpty(this.props.filters) && _.includes(this.props.filters, d.value)) {
-                return "#cccccc";
-            }
-            return null;
-        };
-    }
-
-    @computed
-    get strokeWidth() {
-        return (d: ClinicalDataCountSummary) => {
-            if (!_.isEmpty(this.props.filters) && _.includes(this.props.filters, d.value)) {
-                return 3;
-            }
-            return 0;
-        };
-    }
-
-    @computed
-    get fillOpacity() {
-        return (d: ClinicalDataCountSummary) => {
-            if (!_.isEmpty(this.props.filters) && !_.includes(this.props.filters, d.value)) {
-                return '0.5';
-            }
-            return 1;
-        };
-    }
-
-    @autobind
-    private x(d: ClinicalDataCountSummary) {
-        return d.value;
-    }
-
-    @autobind
-    private y(d: ClinicalDataCountSummary) {
-        return d.count;
-    }
-
-    @autobind
-    private label(d: ClinicalDataCountSummary) {
-        return d.count / this.totalCount > 0.5 ? d.count.toLocaleString() : (
-            this.maxLength(d.count / this.totalCount, this.pieSliceRadius / 3) <
-            getTextWidth(
-                d.count.toLocaleString(),
-                CBIOPORTAL_VICTORY_THEME.axis.style.tickLabels.fontFamily,
-                `${CBIOPORTAL_VICTORY_THEME.axis.style.tickLabels.fontSize}px`
-            ) ? '' : d.count.toLocaleString());
-    }
-
-    // We don't want to show a bigger pie chart when the height is way smaller than width
-    @computed
-    get chartSize() {
-        return (this.props.width + this.props.height ) / 2;
-    }
-
-    @computed
-    get pieSliceRadius(): number {
-        const chartWidth = this.props.width > this.props.height ? this.props.height : this.props.width;
-        return chartWidth / 2 - STUDY_VIEW_CONFIG.thresholds.piePadding;
-    }
-
-    @computed
-    get victoryPie() {
-        return (
-            <VictoryPie
-                standalone={false}
-                theme={CBIOPORTAL_VICTORY_THEME}
-                containerComponent={<VictoryContainer responsive={false}/>}
-                groupComponent={<g className="studyViewPieChartGroup" transform="translate(0, -12)"/>}
-                width={this.props.width}
-                height={this.chartSize}
-                labelRadius={this.pieSliceRadius / 3}
-                radius={this.pieSliceRadius}
-                labels={this.label}
-                data={this.props.data}
-                dataComponent={<CustomSlice/>}
-                labelComponent={<VictoryLabel/>}
-                events={this.userEvents}
-                style={{
-                    data: {
-                        fill: ifndef(this.fill, "#cccccc"),
-                        stroke: ifndef(this.stroke, "0x000000"),
-                        strokeWidth: ifndef(this.strokeWidth, 0),
-                        fillOpacity: ifndef(this.fillOpacity, 1),
-                        cursor: 'pointer'
-                    },
-                    labels: {
-                        fill: "white",
-                        cursor: 'pointer'
-                    }
-                }}
-                x={this.x}
-                y={this.y}
-            />
-        );
-    }
-
-    @computed
-    get victoryLegend() {
-        const legendData = this.props.data.map(data =>
-            ({name: `${data.value}: ${data.count} (${getFrequencyStr(100 * data.count / this.totalCount)})`}));
-        const colorScale = this.props.data.map(data => data.color);
-
-        // override the legend style without mutating the actual theme object
-        const theme = _.cloneDeep(CBIOPORTAL_VICTORY_THEME);
-        theme.legend.style.data = {
-            type: "square",
-            size: 5,
-            strokeWidth: 0,
-            stroke: "black"
-        };
-
-        return (
-            <VictoryLegend
-                standalone={false}
-                theme={theme}
-                colorScale={colorScale}
-                x={0} y={this.props.height + 1}
-                rowGutter={-10}
-                title={this.props.label || "Legend"}
-                centerTitle={true}
-                style={{title: {fontWeight: "bold"}}}
-                data={legendData}
-                groupComponent={<g className="studyViewPieChartLegend"/>}
-            />
-        );
-    }
-
-    private maxLength(ratioOfPie: number, radius: number) {
-        return Math.abs(Math.tan(Math.PI * ratioOfPie / 2)) * radius * 2;
-    }
-
-    public render() {
-        return (
-            <DefaultTooltip
-                placement={this.props.placement}
-                overlay={(
-                    <ClinicalTable
-                        width={300}
-                        height={150}
-                        data={this.props.data}
-                        label={this.props.label}
-                        labelDescription={this.props.labelDescription}
-                        patientAttribute={this.props.patientAttribute}
-                        showAddRemoveAllButtons={true}
-                        filters={this.props.filters}
-                        highlightedRow={this.highlightedRow}
-                        onUserSelection={this.props.onUserSelection}
-                    />)}
-                destroyTooltipOnHide={true}
-                trigger={["hover"]}
-            >
-                <svg
-                    width={this.props.width}
-                    height={this.props.height}
-                    ref={(ref: any) => this.svg = ref}
-                >
-                    {this.victoryPie}
-                    {this.victoryLegend}
-                </svg>
-            </DefaultTooltip>
-        );
-    }
-
+  public render() {
+    return (
+      <DefaultTooltip
+        placement={this.props.placement}
+        overlay={
+          <ClinicalTable
+            width={300}
+            height={150}
+            data={this.props.data}
+            label={this.props.label}
+            labelDescription={this.props.labelDescription}
+            patientAttribute={this.props.patientAttribute}
+            showAddRemoveAllButtons={true}
+            filters={this.props.filters}
+            highlightedRow={this.highlightedRow}
+            onUserSelection={this.props.onUserSelection}
+          />
+        }
+        destroyTooltipOnHide={true}
+        trigger={["hover"]}
+      >
+        <svg
+          width={this.props.width}
+          height={this.props.height}
+          ref={(ref: any) => (this.svg = ref)}
+        >
+          {this.victoryPie}
+          {this.victoryLegend}
+        </svg>
+      </DefaultTooltip>
+    );
+  }
 }
 
 class CustomSlice extends React.Component<{}, {}> {
-    render() {
-        const d: any = this.props;
-        return (
-            <g>
-                <Slice {...this.props} />
-                <title>{`${d.datum.value}:${d.datum.count}`}</title>
-            </g>
-        );
-    }
+  render() {
+    const d: any = this.props;
+    return (
+      <g>
+        <Slice {...this.props} />
+        <title>{`${d.datum.value}:${d.datum.count}`}</title>
+      </g>
+    );
+  }
 }

@@ -1,18 +1,18 @@
 import client from "shared/api/genomeNexusClientInstance";
 import LazyMobXCache from "shared/lib/LazyMobXCache";
-import {PdbHeader} from "public-lib/api/generated/GenomeNexusAPI";
+import { PdbHeader } from "public-lib/api/generated/GenomeNexusAPI";
 
-function fetch(pdbIds:string[]):Promise<PdbHeader[]> {
-    if (pdbIds.length === 0) {
-        return Promise.reject("No pdb ids given");
-    } else {
-        return client.fetchPdbHeaderPOST({
-            pdbIds: pdbIds
-        });
-    }
+function fetch(pdbIds: string[]): Promise<PdbHeader[]> {
+  if (pdbIds.length === 0) {
+    return Promise.reject("No pdb ids given");
+  } else {
+    return client.fetchPdbHeaderPOST({
+      pdbIds: pdbIds
+    });
+  }
 }
 export default class PdbHeaderCache extends LazyMobXCache<PdbHeader, string> {
-    constructor() {
-        super(q=>q, (d:PdbHeader)=>d.pdbId, fetch);
-    }
+  constructor() {
+    super(q => q, (d: PdbHeader) => d.pdbId, fetch);
+  }
 }

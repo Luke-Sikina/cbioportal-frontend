@@ -1,57 +1,55 @@
 import * as request from "superagent";
 
-type CallbackHandler = (err: any, res ? : request.Response) => void;
+type CallbackHandler = (err: any, res?: request.Response) => void;
 export type Alignment = {
-    'alignmentId': number
+  alignmentId: number;
 
-        'bitscore': number
+  bitscore: number;
 
-        'chain': string
+  chain: string;
 
-        'evalue': string
+  evalue: string;
 
-        'identity': number
+  identity: number;
 
-        'identityPositive': number
+  identityPositive: number;
 
-        'midlineAlign': string
+  midlineAlign: string;
 
-        'pdbAlign': string
+  pdbAlign: string;
 
-        'pdbFrom': number
+  pdbFrom: number;
 
-        'pdbId': string
+  pdbId: string;
 
-        'pdbNo': string
+  pdbNo: string;
 
-        'pdbSeg': string
+  pdbSeg: string;
 
-        'pdbTo': number
+  pdbTo: number;
 
-        'residueMapping': Array < ResidueMapping >
+  residueMapping: Array<ResidueMapping>;
 
-        'segStart': string
+  segStart: string;
 
-        'seqAlign': string
+  seqAlign: string;
 
-        'seqFrom': number
+  seqFrom: number;
 
-        'seqId': string
+  seqId: string;
 
-        'seqTo': number
+  seqTo: number;
 
-        'updateDate': string
-
+  updateDate: string;
 };
 export type ResidueMapping = {
-    'pdbAminoAcid': string
+  pdbAminoAcid: string;
 
-        'pdbPosition': number
+  pdbPosition: number;
 
-        'queryAminoAcid': string
+  queryAminoAcid: string;
 
-        'queryPosition': number
-
+  queryPosition: number;
 };
 
 /**
@@ -60,80 +58,100 @@ export type ResidueMapping = {
  * @param {(string)} [domainOrOptions] - The project domain.
  */
 export default class Genome2StructureAPI {
+  private domain: string = "";
+  private errorHandlers: CallbackHandler[] = [];
 
-    private domain: string = "";
-    private errorHandlers: CallbackHandler[] = [];
+  constructor(domain?: string) {
+    if (domain) {
+      this.domain = domain;
+    }
+  }
 
-    constructor(domain ? : string) {
-        if (domain) {
-            this.domain = domain;
-        }
+  getDomain() {
+    return this.domain;
+  }
+
+  addErrorHandler(handler: CallbackHandler) {
+    this.errorHandlers.push(handler);
+  }
+
+  private request(
+    method: string,
+    url: string,
+    body: any,
+    headers: any,
+    queryParameters: any,
+    form: any,
+    reject: CallbackHandler,
+    resolve: CallbackHandler,
+    errorHandlers: CallbackHandler[]
+  ) {
+    let req = (new (request as any).Request(
+      method,
+      url
+    ) as request.Request).query(queryParameters);
+    Object.keys(headers).forEach(key => {
+      req.set(key, headers[key]);
+    });
+
+    if (body) {
+      req.send(body);
     }
 
-    getDomain() {
-        return this.domain;
+    if (typeof body === "object" && !(body.constructor.name === "Buffer")) {
+      req.set("Content-Type", "application/json");
     }
 
-    addErrorHandler(handler: CallbackHandler) {
-        this.errorHandlers.push(handler);
+    if (Object.keys(form).length > 0) {
+      req.type("form");
+      req.send(form);
     }
 
-    private request(method: string, url: string, body: any, headers: any, queryParameters: any, form: any, reject: CallbackHandler, resolve: CallbackHandler, errorHandlers: CallbackHandler[]) {
-        let req = (new(request as any).Request(method, url) as request.Request)
-            .query(queryParameters);
-        Object.keys(headers).forEach(key => {
-            req.set(key, headers[key]);
-        });
+    req.end((error, response) => {
+      if (error || !response.ok) {
+        reject(error);
+        errorHandlers.forEach(handler => handler(error));
+      } else {
+        resolve(response);
+      }
+    });
+  }
 
-        if (body) {
-            req.send(body);
-        }
-
-        if (typeof(body) === 'object' && !(body.constructor.name === 'Buffer')) {
-            req.set('Content-Type', 'application/json');
-        }
-
-        if (Object.keys(form).length > 0) {
-            req.type('form');
-            req.send(form);
-        }
-
-        req.end((error, response) => {
-            if (error || !response.ok) {
-                reject(error);
-                errorHandlers.forEach(handler => handler(error));
-            } else {
-                resolve(response);
-            }
-        });
+  getPdbAlignmentBySequenceUsingGETURL(parameters: {
+    sequence: string;
+    paramList?: Array<string>;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path = "/api/alignments";
+    if (parameters["sequence"] !== undefined) {
+      queryParameters["sequence"] = parameters["sequence"];
     }
 
-    getPdbAlignmentBySequenceUsingGETURL(parameters: {
-        'sequence': string,
-        'paramList' ? : Array < string > ,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments';
-        if (parameters['sequence'] !== undefined) {
-            queryParameters['sequence'] = parameters['sequence'];
-        }
+    if (parameters["paramList"] !== undefined) {
+      queryParameters["paramList"] = parameters["paramList"];
+    }
 
-        if (parameters['paramList'] !== undefined) {
-            queryParameters['paramList'] = parameters['paramList'];
-        }
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * Get PDB Alignments by Protein Sequence
     * @method
     * @name Genome2StructureAPI#getPdbAlignmentBySequenceUsingGET
@@ -143,78 +161,97 @@ export default class Genome2StructureAPI {
      Matrix=BLOSUM62,Comp_based_stats=2,
     Threshold=11,Windowsize=40
     */
-    getPdbAlignmentBySequenceUsingGET(parameters: {
-            'sequence': string,
-            'paramList' ? : Array < string > ,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  getPdbAlignmentBySequenceUsingGET(parameters: {
+    sequence: string;
+    paramList?: Array<string>;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path = "/api/alignments";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                if (parameters['sequence'] !== undefined) {
-                    queryParameters['sequence'] = parameters['sequence'];
-                }
+      if (parameters["sequence"] !== undefined) {
+        queryParameters["sequence"] = parameters["sequence"];
+      }
 
-                if (parameters['sequence'] === undefined) {
-                    reject(new Error('Missing required  parameter: sequence'));
-                    return;
-                }
+      if (parameters["sequence"] === undefined) {
+        reject(new Error("Missing required  parameter: sequence"));
+        return;
+      }
 
-                if (parameters['paramList'] !== undefined) {
-                    queryParameters['paramList'] = parameters['paramList'];
-                }
+      if (parameters["paramList"] !== undefined) {
+        queryParameters["paramList"] = parameters["paramList"];
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "GET",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  getPdbAlignmentBySequenceUsingPOSTURL(parameters: {
+    sequence: string;
+    paramList?: Array<string>;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path = "/api/alignments";
+    if (parameters["sequence"] !== undefined) {
+      queryParameters["sequence"] = parameters["sequence"];
+    }
 
-    getPdbAlignmentBySequenceUsingPOSTURL(parameters: {
-        'sequence': string,
-        'paramList' ? : Array < string > ,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments';
-        if (parameters['sequence'] !== undefined) {
-            queryParameters['sequence'] = parameters['sequence'];
-        }
+    if (parameters["paramList"] !== undefined) {
+      queryParameters["paramList"] = parameters["paramList"];
+    }
 
-        if (parameters['paramList'] !== undefined) {
-            queryParameters['paramList'] = parameters['paramList'];
-        }
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * Get PDB Alignments by Protein Sequence
     * @method
     * @name Genome2StructureAPI#getPdbAlignmentBySequenceUsingPOST
@@ -224,83 +261,102 @@ export default class Genome2StructureAPI {
      Matrix=BLOSUM62,Comp_based_stats=2,
     Threshold=11,Windowsize=40
     */
-    getPdbAlignmentBySequenceUsingPOST(parameters: {
-            'sequence': string,
-            'paramList' ? : Array < string > ,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  getPdbAlignmentBySequenceUsingPOST(parameters: {
+    sequence: string;
+    paramList?: Array<string>;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path = "/api/alignments";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                if (parameters['sequence'] !== undefined) {
-                    queryParameters['sequence'] = parameters['sequence'];
-                }
+      if (parameters["sequence"] !== undefined) {
+        queryParameters["sequence"] = parameters["sequence"];
+      }
 
-                if (parameters['sequence'] === undefined) {
-                    reject(new Error('Missing required  parameter: sequence'));
-                    return;
-                }
+      if (parameters["sequence"] === undefined) {
+        reject(new Error("Missing required  parameter: sequence"));
+        return;
+      }
 
-                if (parameters['paramList'] !== undefined) {
-                    queryParameters['paramList'] = parameters['paramList'];
-                }
+      if (parameters["paramList"] !== undefined) {
+        queryParameters["paramList"] = parameters["paramList"];
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('POST', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "POST",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  getPdbAlignmentReisudeBySequenceUsingGETURL(parameters: {
+    sequence: string;
+    positionList?: Array<string>;
+    paramList?: Array<string>;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path = "/api/alignments/residueMapping";
+    if (parameters["sequence"] !== undefined) {
+      queryParameters["sequence"] = parameters["sequence"];
+    }
 
-    getPdbAlignmentReisudeBySequenceUsingGETURL(parameters: {
-        'sequence': string,
-        'positionList' ? : Array < string > ,
-        'paramList' ? : Array < string > ,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments/residueMapping';
-        if (parameters['sequence'] !== undefined) {
-            queryParameters['sequence'] = parameters['sequence'];
-        }
+    if (parameters["positionList"] !== undefined) {
+      queryParameters["positionList"] = parameters["positionList"];
+    }
 
-        if (parameters['positionList'] !== undefined) {
-            queryParameters['positionList'] = parameters['positionList'];
-        }
+    if (parameters["paramList"] !== undefined) {
+      queryParameters["paramList"] = parameters["paramList"];
+    }
 
-        if (parameters['paramList'] !== undefined) {
-            queryParameters['paramList'] = parameters['paramList'];
-        }
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * Get PDB Residue Mapping by Protein Sequence and Residue position
     * @method
     * @name Genome2StructureAPI#getPdbAlignmentReisudeBySequenceUsingGET
@@ -311,88 +367,107 @@ export default class Genome2StructureAPI {
      Matrix=BLOSUM62,Comp_based_stats=2,
     Threshold=11,Windowsize=40
     */
-    getPdbAlignmentReisudeBySequenceUsingGET(parameters: {
-            'sequence': string,
-            'positionList' ? : Array < string > ,
-            'paramList' ? : Array < string > ,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments/residueMapping';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  getPdbAlignmentReisudeBySequenceUsingGET(parameters: {
+    sequence: string;
+    positionList?: Array<string>;
+    paramList?: Array<string>;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path = "/api/alignments/residueMapping";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                if (parameters['sequence'] !== undefined) {
-                    queryParameters['sequence'] = parameters['sequence'];
-                }
+      if (parameters["sequence"] !== undefined) {
+        queryParameters["sequence"] = parameters["sequence"];
+      }
 
-                if (parameters['sequence'] === undefined) {
-                    reject(new Error('Missing required  parameter: sequence'));
-                    return;
-                }
+      if (parameters["sequence"] === undefined) {
+        reject(new Error("Missing required  parameter: sequence"));
+        return;
+      }
 
-                if (parameters['positionList'] !== undefined) {
-                    queryParameters['positionList'] = parameters['positionList'];
-                }
+      if (parameters["positionList"] !== undefined) {
+        queryParameters["positionList"] = parameters["positionList"];
+      }
 
-                if (parameters['paramList'] !== undefined) {
-                    queryParameters['paramList'] = parameters['paramList'];
-                }
+      if (parameters["paramList"] !== undefined) {
+        queryParameters["paramList"] = parameters["paramList"];
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "GET",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  getPdbAlignmentReisudeBySequenceUsingPOSTURL(parameters: {
+    sequence: string;
+    positionList?: Array<string>;
+    paramList?: Array<string>;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path = "/api/alignments/residueMapping";
+    if (parameters["sequence"] !== undefined) {
+      queryParameters["sequence"] = parameters["sequence"];
+    }
 
-    getPdbAlignmentReisudeBySequenceUsingPOSTURL(parameters: {
-        'sequence': string,
-        'positionList' ? : Array < string > ,
-        'paramList' ? : Array < string > ,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments/residueMapping';
-        if (parameters['sequence'] !== undefined) {
-            queryParameters['sequence'] = parameters['sequence'];
-        }
+    if (parameters["positionList"] !== undefined) {
+      queryParameters["positionList"] = parameters["positionList"];
+    }
 
-        if (parameters['positionList'] !== undefined) {
-            queryParameters['positionList'] = parameters['positionList'];
-        }
+    if (parameters["paramList"] !== undefined) {
+      queryParameters["paramList"] = parameters["paramList"];
+    }
 
-        if (parameters['paramList'] !== undefined) {
-            queryParameters['paramList'] = parameters['paramList'];
-        }
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * Get PDB Residue Mapping by Protein Sequence and Residue position
     * @method
     * @name Genome2StructureAPI#getPdbAlignmentReisudeBySequenceUsingPOST
@@ -403,80 +478,99 @@ export default class Genome2StructureAPI {
      Matrix=BLOSUM62,Comp_based_stats=2,
     Threshold=11,Windowsize=40
     */
-    getPdbAlignmentReisudeBySequenceUsingPOST(parameters: {
-            'sequence': string,
-            'positionList' ? : Array < string > ,
-            'paramList' ? : Array < string > ,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments/residueMapping';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  getPdbAlignmentReisudeBySequenceUsingPOST(parameters: {
+    sequence: string;
+    positionList?: Array<string>;
+    paramList?: Array<string>;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path = "/api/alignments/residueMapping";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                if (parameters['sequence'] !== undefined) {
-                    queryParameters['sequence'] = parameters['sequence'];
-                }
+      if (parameters["sequence"] !== undefined) {
+        queryParameters["sequence"] = parameters["sequence"];
+      }
 
-                if (parameters['sequence'] === undefined) {
-                    reject(new Error('Missing required  parameter: sequence'));
-                    return;
-                }
+      if (parameters["sequence"] === undefined) {
+        reject(new Error("Missing required  parameter: sequence"));
+        return;
+      }
 
-                if (parameters['positionList'] !== undefined) {
-                    queryParameters['positionList'] = parameters['positionList'];
-                }
+      if (parameters["positionList"] !== undefined) {
+        queryParameters["positionList"] = parameters["positionList"];
+      }
 
-                if (parameters['paramList'] !== undefined) {
-                    queryParameters['paramList'] = parameters['paramList'];
-                }
+      if (parameters["paramList"] !== undefined) {
+        queryParameters["paramList"] = parameters["paramList"];
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('POST', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "POST",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  getAlignmentUsingGETURL(parameters: {
+    idType: string;
+    id: string;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path = "/api/alignments/{id_type}/{id}";
 
-    getAlignmentUsingGETURL(parameters: {
-        'idType': string,
-        'id': string,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments/{id_type}/{id}';
+    path = path.replace("{id_type}", parameters["idType"] + "");
 
-        path = path.replace('{id_type}', parameters['idType'] + '');
+    path = path.replace("{id}", parameters["id"] + "");
 
-        path = path.replace('{id}', parameters['id'] + '');
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * Get PDB Alignments by ProteinId
     * @method
     * @name Genome2StructureAPI#getAlignmentUsingGET
@@ -484,82 +578,101 @@ export default class Genome2StructureAPI {
          * @param {string} id - Input id e.g.
     ensembl:ENSP00000484409.1/ENSG00000141510.16/ENST00000504290.5; uniprot:P04637/P53_HUMAN; uniprot_isoform:P04637_9/P53_HUMAN_9 
     */
-    getAlignmentUsingGET(parameters: {
-            'idType': string,
-            'id': string,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments/{id_type}/{id}';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  getAlignmentUsingGET(parameters: {
+    idType: string;
+    id: string;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path = "/api/alignments/{id_type}/{id}";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                path = path.replace('{id_type}', parameters['idType'] + '');
+      path = path.replace("{id_type}", parameters["idType"] + "");
 
-                if (parameters['idType'] === undefined) {
-                    reject(new Error('Missing required  parameter: idType'));
-                    return;
-                }
+      if (parameters["idType"] === undefined) {
+        reject(new Error("Missing required  parameter: idType"));
+        return;
+      }
 
-                path = path.replace('{id}', parameters['id'] + '');
+      path = path.replace("{id}", parameters["id"] + "");
 
-                if (parameters['id'] === undefined) {
-                    reject(new Error('Missing required  parameter: id'));
-                    return;
-                }
+      if (parameters["id"] === undefined) {
+        reject(new Error("Missing required  parameter: id"));
+        return;
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "GET",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  getAlignmentByPDBUsingGETURL(parameters: {
+    idType: string;
+    id: string;
+    pdbId: string;
+    chainId: string;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path = "/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}";
 
-    getAlignmentByPDBUsingGETURL(parameters: {
-        'idType': string,
-        'id': string,
-        'pdbId': string,
-        'chainId': string,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}';
+    path = path.replace("{id_type}", parameters["idType"] + "");
 
-        path = path.replace('{id_type}', parameters['idType'] + '');
+    path = path.replace("{id}", parameters["id"] + "");
 
-        path = path.replace('{id}', parameters['id'] + '');
+    path = path.replace("{pdb_id}", parameters["pdbId"] + "");
 
-        path = path.replace('{pdb_id}', parameters['pdbId'] + '');
+    path = path.replace("{chain_id}", parameters["chainId"] + "");
 
-        path = path.replace('{chain_id}', parameters['chainId'] + '');
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * Get PDB Alignments by ProteinId, PDBId and Chain
     * @method
     * @name Genome2StructureAPI#getAlignmentByPDBUsingGET
@@ -569,102 +682,122 @@ export default class Genome2StructureAPI {
          * @param {string} pdbId - Input PDB Id e.g. 2fej
          * @param {string} chainId - Input Chain e.g. A
     */
-    getAlignmentByPDBUsingGET(parameters: {
-            'idType': string,
-            'id': string,
-            'pdbId': string,
-            'chainId': string,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  getAlignmentByPDBUsingGET(parameters: {
+    idType: string;
+    id: string;
+    pdbId: string;
+    chainId: string;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path = "/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                path = path.replace('{id_type}', parameters['idType'] + '');
+      path = path.replace("{id_type}", parameters["idType"] + "");
 
-                if (parameters['idType'] === undefined) {
-                    reject(new Error('Missing required  parameter: idType'));
-                    return;
-                }
+      if (parameters["idType"] === undefined) {
+        reject(new Error("Missing required  parameter: idType"));
+        return;
+      }
 
-                path = path.replace('{id}', parameters['id'] + '');
+      path = path.replace("{id}", parameters["id"] + "");
 
-                if (parameters['id'] === undefined) {
-                    reject(new Error('Missing required  parameter: id'));
-                    return;
-                }
+      if (parameters["id"] === undefined) {
+        reject(new Error("Missing required  parameter: id"));
+        return;
+      }
 
-                path = path.replace('{pdb_id}', parameters['pdbId'] + '');
+      path = path.replace("{pdb_id}", parameters["pdbId"] + "");
 
-                if (parameters['pdbId'] === undefined) {
-                    reject(new Error('Missing required  parameter: pdbId'));
-                    return;
-                }
+      if (parameters["pdbId"] === undefined) {
+        reject(new Error("Missing required  parameter: pdbId"));
+        return;
+      }
 
-                path = path.replace('{chain_id}', parameters['chainId'] + '');
+      path = path.replace("{chain_id}", parameters["chainId"] + "");
 
-                if (parameters['chainId'] === undefined) {
-                    reject(new Error('Missing required  parameter: chainId'));
-                    return;
-                }
+      if (parameters["chainId"] === undefined) {
+        reject(new Error("Missing required  parameter: chainId"));
+        return;
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "GET",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  postResidueMappingByPDBUsingGETURL(parameters: {
+    idType: string;
+    id: string;
+    pdbId: string;
+    chainId: string;
+    positionList?: Array<string>;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path =
+      "/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}/residueMapping";
 
-    postResidueMappingByPDBUsingGETURL(parameters: {
-        'idType': string,
-        'id': string,
-        'pdbId': string,
-        'chainId': string,
-        'positionList' ? : Array < string > ,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}/residueMapping';
+    path = path.replace("{id_type}", parameters["idType"] + "");
 
-        path = path.replace('{id_type}', parameters['idType'] + '');
+    path = path.replace("{id}", parameters["id"] + "");
 
-        path = path.replace('{id}', parameters['id'] + '');
+    path = path.replace("{pdb_id}", parameters["pdbId"] + "");
 
-        path = path.replace('{pdb_id}', parameters['pdbId'] + '');
+    path = path.replace("{chain_id}", parameters["chainId"] + "");
+    if (parameters["positionList"] !== undefined) {
+      queryParameters["positionList"] = parameters["positionList"];
+    }
 
-        path = path.replace('{chain_id}', parameters['chainId'] + '');
-        if (parameters['positionList'] !== undefined) {
-            queryParameters['positionList'] = parameters['positionList'];
-        }
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * Post Residue Mapping by ProteinId, PDBId and Chain
     * @method
     * @name Genome2StructureAPI#postResidueMappingByPDBUsingGET
@@ -680,107 +813,128 @@ export default class Genome2StructureAPI {
          * @param {array} positionList - Input Residue Positions e.g. 10,100 (Anynumber for hgvs);
     Return all residue mappings if none
     */
-    postResidueMappingByPDBUsingGET(parameters: {
-            'idType': string,
-            'id': string,
-            'pdbId': string,
-            'chainId': string,
-            'positionList' ? : Array < string > ,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}/residueMapping';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  postResidueMappingByPDBUsingGET(parameters: {
+    idType: string;
+    id: string;
+    pdbId: string;
+    chainId: string;
+    positionList?: Array<string>;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path =
+      "/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}/residueMapping";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                path = path.replace('{id_type}', parameters['idType'] + '');
+      path = path.replace("{id_type}", parameters["idType"] + "");
 
-                if (parameters['idType'] === undefined) {
-                    reject(new Error('Missing required  parameter: idType'));
-                    return;
-                }
+      if (parameters["idType"] === undefined) {
+        reject(new Error("Missing required  parameter: idType"));
+        return;
+      }
 
-                path = path.replace('{id}', parameters['id'] + '');
+      path = path.replace("{id}", parameters["id"] + "");
 
-                if (parameters['id'] === undefined) {
-                    reject(new Error('Missing required  parameter: id'));
-                    return;
-                }
+      if (parameters["id"] === undefined) {
+        reject(new Error("Missing required  parameter: id"));
+        return;
+      }
 
-                path = path.replace('{pdb_id}', parameters['pdbId'] + '');
+      path = path.replace("{pdb_id}", parameters["pdbId"] + "");
 
-                if (parameters['pdbId'] === undefined) {
-                    reject(new Error('Missing required  parameter: pdbId'));
-                    return;
-                }
+      if (parameters["pdbId"] === undefined) {
+        reject(new Error("Missing required  parameter: pdbId"));
+        return;
+      }
 
-                path = path.replace('{chain_id}', parameters['chainId'] + '');
+      path = path.replace("{chain_id}", parameters["chainId"] + "");
 
-                if (parameters['chainId'] === undefined) {
-                    reject(new Error('Missing required  parameter: chainId'));
-                    return;
-                }
+      if (parameters["chainId"] === undefined) {
+        reject(new Error("Missing required  parameter: chainId"));
+        return;
+      }
 
-                if (parameters['positionList'] !== undefined) {
-                    queryParameters['positionList'] = parameters['positionList'];
-                }
+      if (parameters["positionList"] !== undefined) {
+        queryParameters["positionList"] = parameters["positionList"];
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "GET",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  postResidueMappingByPDBUsingPOSTURL(parameters: {
+    idType: string;
+    id: string;
+    pdbId: string;
+    chainId: string;
+    positionList?: Array<string>;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path =
+      "/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}/residueMapping";
 
-    postResidueMappingByPDBUsingPOSTURL(parameters: {
-        'idType': string,
-        'id': string,
-        'pdbId': string,
-        'chainId': string,
-        'positionList' ? : Array < string > ,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}/residueMapping';
+    path = path.replace("{id_type}", parameters["idType"] + "");
 
-        path = path.replace('{id_type}', parameters['idType'] + '');
+    path = path.replace("{id}", parameters["id"] + "");
 
-        path = path.replace('{id}', parameters['id'] + '');
+    path = path.replace("{pdb_id}", parameters["pdbId"] + "");
 
-        path = path.replace('{pdb_id}', parameters['pdbId'] + '');
+    path = path.replace("{chain_id}", parameters["chainId"] + "");
+    if (parameters["positionList"] !== undefined) {
+      queryParameters["positionList"] = parameters["positionList"];
+    }
 
-        path = path.replace('{chain_id}', parameters['chainId'] + '');
-        if (parameters['positionList'] !== undefined) {
-            queryParameters['positionList'] = parameters['positionList'];
-        }
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * Post Residue Mapping by ProteinId, PDBId and Chain
     * @method
     * @name Genome2StructureAPI#postResidueMappingByPDBUsingPOST
@@ -796,101 +950,121 @@ export default class Genome2StructureAPI {
          * @param {array} positionList - Input Residue Positions e.g. 10,100 (Anynumber for hgvs);
     Return all residue mappings if none
     */
-    postResidueMappingByPDBUsingPOST(parameters: {
-            'idType': string,
-            'id': string,
-            'pdbId': string,
-            'chainId': string,
-            'positionList' ? : Array < string > ,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}/residueMapping';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  postResidueMappingByPDBUsingPOST(parameters: {
+    idType: string;
+    id: string;
+    pdbId: string;
+    chainId: string;
+    positionList?: Array<string>;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path =
+      "/api/alignments/{id_type}/{id}/pdb/{pdb_id}_{chain_id}/residueMapping";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                path = path.replace('{id_type}', parameters['idType'] + '');
+      path = path.replace("{id_type}", parameters["idType"] + "");
 
-                if (parameters['idType'] === undefined) {
-                    reject(new Error('Missing required  parameter: idType'));
-                    return;
-                }
+      if (parameters["idType"] === undefined) {
+        reject(new Error("Missing required  parameter: idType"));
+        return;
+      }
 
-                path = path.replace('{id}', parameters['id'] + '');
+      path = path.replace("{id}", parameters["id"] + "");
 
-                if (parameters['id'] === undefined) {
-                    reject(new Error('Missing required  parameter: id'));
-                    return;
-                }
+      if (parameters["id"] === undefined) {
+        reject(new Error("Missing required  parameter: id"));
+        return;
+      }
 
-                path = path.replace('{pdb_id}', parameters['pdbId'] + '');
+      path = path.replace("{pdb_id}", parameters["pdbId"] + "");
 
-                if (parameters['pdbId'] === undefined) {
-                    reject(new Error('Missing required  parameter: pdbId'));
-                    return;
-                }
+      if (parameters["pdbId"] === undefined) {
+        reject(new Error("Missing required  parameter: pdbId"));
+        return;
+      }
 
-                path = path.replace('{chain_id}', parameters['chainId'] + '');
+      path = path.replace("{chain_id}", parameters["chainId"] + "");
 
-                if (parameters['chainId'] === undefined) {
-                    reject(new Error('Missing required  parameter: chainId'));
-                    return;
-                }
+      if (parameters["chainId"] === undefined) {
+        reject(new Error("Missing required  parameter: chainId"));
+        return;
+      }
 
-                if (parameters['positionList'] !== undefined) {
-                    queryParameters['positionList'] = parameters['positionList'];
-                }
+      if (parameters["positionList"] !== undefined) {
+        queryParameters["positionList"] = parameters["positionList"];
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('POST', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "POST",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  postResidueMappingUsingGETURL(parameters: {
+    idType: string;
+    id: string;
+    positionList?: Array<string>;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path = "/api/alignments/{id_type}/{id}/residueMapping";
 
-    postResidueMappingUsingGETURL(parameters: {
-        'idType': string,
-        'id': string,
-        'positionList' ? : Array < string > ,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments/{id_type}/{id}/residueMapping';
+    path = path.replace("{id_type}", parameters["idType"] + "");
 
-        path = path.replace('{id_type}', parameters['idType'] + '');
+    path = path.replace("{id}", parameters["id"] + "");
+    if (parameters["positionList"] !== undefined) {
+      queryParameters["positionList"] = parameters["positionList"];
+    }
 
-        path = path.replace('{id}', parameters['id'] + '');
-        if (parameters['positionList'] !== undefined) {
-            queryParameters['positionList'] = parameters['positionList'];
-        }
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * POST PDB Residue Mapping by ProteinId
     * @method
     * @name Genome2StructureAPI#postResidueMappingUsingGET
@@ -905,85 +1079,104 @@ export default class Genome2StructureAPI {
          * @param {array} positionList - Input Residue Positions e.g. 10,100; Anynumber for hgvs;
     Return all residue mappings if none
     */
-    postResidueMappingUsingGET(parameters: {
-            'idType': string,
-            'id': string,
-            'positionList' ? : Array < string > ,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments/{id_type}/{id}/residueMapping';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  postResidueMappingUsingGET(parameters: {
+    idType: string;
+    id: string;
+    positionList?: Array<string>;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path = "/api/alignments/{id_type}/{id}/residueMapping";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                path = path.replace('{id_type}', parameters['idType'] + '');
+      path = path.replace("{id_type}", parameters["idType"] + "");
 
-                if (parameters['idType'] === undefined) {
-                    reject(new Error('Missing required  parameter: idType'));
-                    return;
-                }
+      if (parameters["idType"] === undefined) {
+        reject(new Error("Missing required  parameter: idType"));
+        return;
+      }
 
-                path = path.replace('{id}', parameters['id'] + '');
+      path = path.replace("{id}", parameters["id"] + "");
 
-                if (parameters['id'] === undefined) {
-                    reject(new Error('Missing required  parameter: id'));
-                    return;
-                }
+      if (parameters["id"] === undefined) {
+        reject(new Error("Missing required  parameter: id"));
+        return;
+      }
 
-                if (parameters['positionList'] !== undefined) {
-                    queryParameters['positionList'] = parameters['positionList'];
-                }
+      if (parameters["positionList"] !== undefined) {
+        queryParameters["positionList"] = parameters["positionList"];
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+      request(
+        "GET",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
+  postResidueMappingUsingPOSTURL(parameters: {
+    idType: string;
+    id: string;
+    positionList?: Array<string>;
+    $queryParameters?: any;
+  }): string {
+    let queryParameters: any = {};
+    let path = "/api/alignments/{id_type}/{id}/residueMapping";
 
-    postResidueMappingUsingPOSTURL(parameters: {
-        'idType': string,
-        'id': string,
-        'positionList' ? : Array < string > ,
-        $queryParameters ? : any
-    }): string {
-        let queryParameters: any = {};
-        let path = '/api/alignments/{id_type}/{id}/residueMapping';
+    path = path.replace("{id_type}", parameters["idType"] + "");
 
-        path = path.replace('{id_type}', parameters['idType'] + '');
+    path = path.replace("{id}", parameters["id"] + "");
+    if (parameters["positionList"] !== undefined) {
+      queryParameters["positionList"] = parameters["positionList"];
+    }
 
-        path = path.replace('{id}', parameters['id'] + '');
-        if (parameters['positionList'] !== undefined) {
-            queryParameters['positionList'] = parameters['positionList'];
-        }
+    if (parameters.$queryParameters) {
+      Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+        var parameter = parameters.$queryParameters[parameterName];
+        queryParameters[parameterName] = parameter;
+      });
+    }
+    let keys = Object.keys(queryParameters);
+    return (
+      this.domain +
+      path +
+      (keys.length > 0
+        ? "?" +
+          keys
+            .map(key => key + "=" + encodeURIComponent(queryParameters[key]))
+            .join("&")
+        : "")
+    );
+  }
 
-        if (parameters.$queryParameters) {
-            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                var parameter = parameters.$queryParameters[parameterName];
-                queryParameters[parameterName] = parameter;
-            });
-        }
-        let keys = Object.keys(queryParameters);
-        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
-    };
-
-    /**
+  /**
     * POST PDB Residue Mapping by ProteinId
     * @method
     * @name Genome2StructureAPI#postResidueMappingUsingPOST
@@ -998,56 +1191,65 @@ export default class Genome2StructureAPI {
          * @param {array} positionList - Input Residue Positions e.g. 10,100; Anynumber for hgvs;
     Return all residue mappings if none
     */
-    postResidueMappingUsingPOST(parameters: {
-            'idType': string,
-            'id': string,
-            'positionList' ? : Array < string > ,
-            $queryParameters ? : any,
-            $domain ? : string
-        }): Promise < Array < Alignment >
-        > {
-            const domain = parameters.$domain ? parameters.$domain : this.domain;
-            const errorHandlers = this.errorHandlers;
-            const request = this.request;
-            let path = '/api/alignments/{id_type}/{id}/residueMapping';
-            let body: any;
-            let queryParameters: any = {};
-            let headers: any = {};
-            let form: any = {};
-            return new Promise(function(resolve, reject) {
-                headers['Accept'] = 'application/json';
-                headers['Content-Type'] = 'application/json';
+  postResidueMappingUsingPOST(parameters: {
+    idType: string;
+    id: string;
+    positionList?: Array<string>;
+    $queryParameters?: any;
+    $domain?: string;
+  }): Promise<Array<Alignment>> {
+    const domain = parameters.$domain ? parameters.$domain : this.domain;
+    const errorHandlers = this.errorHandlers;
+    const request = this.request;
+    let path = "/api/alignments/{id_type}/{id}/residueMapping";
+    let body: any;
+    let queryParameters: any = {};
+    let headers: any = {};
+    let form: any = {};
+    return new Promise(function(resolve, reject) {
+      headers["Accept"] = "application/json";
+      headers["Content-Type"] = "application/json";
 
-                path = path.replace('{id_type}', parameters['idType'] + '');
+      path = path.replace("{id_type}", parameters["idType"] + "");
 
-                if (parameters['idType'] === undefined) {
-                    reject(new Error('Missing required  parameter: idType'));
-                    return;
-                }
+      if (parameters["idType"] === undefined) {
+        reject(new Error("Missing required  parameter: idType"));
+        return;
+      }
 
-                path = path.replace('{id}', parameters['id'] + '');
+      path = path.replace("{id}", parameters["id"] + "");
 
-                if (parameters['id'] === undefined) {
-                    reject(new Error('Missing required  parameter: id'));
-                    return;
-                }
+      if (parameters["id"] === undefined) {
+        reject(new Error("Missing required  parameter: id"));
+        return;
+      }
 
-                if (parameters['positionList'] !== undefined) {
-                    queryParameters['positionList'] = parameters['positionList'];
-                }
+      if (parameters["positionList"] !== undefined) {
+        queryParameters["positionList"] = parameters["positionList"];
+      }
 
-                if (parameters.$queryParameters) {
-                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
-                        var parameter = parameters.$queryParameters[parameterName];
-                        queryParameters[parameterName] = parameter;
-                    });
-                }
+      if (parameters.$queryParameters) {
+        Object.keys(parameters.$queryParameters).forEach(function(
+          parameterName
+        ) {
+          var parameter = parameters.$queryParameters[parameterName];
+          queryParameters[parameterName] = parameter;
+        });
+      }
 
-                request('POST', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
-
-            }).then(function(response: request.Response) {
-                return response.body;
-            });
-        };
-
+      request(
+        "POST",
+        domain + path,
+        body,
+        headers,
+        queryParameters,
+        form,
+        reject,
+        resolve,
+        errorHandlers
+      );
+    }).then(function(response: request.Response) {
+      return response.body;
+    });
+  }
 }
