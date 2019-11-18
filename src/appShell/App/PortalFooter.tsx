@@ -27,7 +27,7 @@ import {observer} from "mobx-react";
                 return (
                     <div id="footer" dangerouslySetInnerHTML={{__html:
                         "<a href='http://www.cbioportal.org'>cBioPortal</a> | " +
-                        `<a href='${AppConfig.apiRoot}api/info'>v2.2.2</a> ` +
+                        `<a href='${AppConfig.apiRoot}api/info'>v3.0.7</a> ` +
                         AppConfig.serverConfig.skin_footer +
                         "<br />" +
                         `Questions and Feedback: <a href="mailto:${AppConfig.serverConfig.skin_email_contact}">${AppConfig.serverConfig.skin_email_contact}</a>`
