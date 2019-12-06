@@ -70,7 +70,6 @@ export class BookmarkModal extends React.Component<{ onHide: () => void, urlProm
     public container:HTMLDivElement;
 
     render() {
-
         //NOTE: internal div id necessary for
         return <Modal show={true} onHide={this.props.onHide}>
             <Modal.Header closeButton>
@@ -78,7 +77,7 @@ export class BookmarkModal extends React.Component<{ onHide: () => void, urlProm
             </Modal.Header>
             <Modal.Body style={{minHeight:70}}>
                 <LoadingIndicator size={"big"} center={true} style={{top:32}} isLoading={!this.urlData}/>
-                    <div className={classNames({hidden:!this.urlData})} ref={(el:HTMLDivElement)=>this.container=el}>
+                    {this.urlData && <div className={classNames({hidden:!this.urlData})} ref={(el:HTMLDivElement)=>this.container=el}>
                         <form>
                             <div className="form-group">
                                 <label htmlFor="exampleInputAmount">Share link</label>
@@ -108,7 +107,7 @@ export class BookmarkModal extends React.Component<{ onHide: () => void, urlProm
                                 )
                             }
                         </form>
-                    </div>
+                    </div>}
             </Modal.Body>
         </Modal>
 
