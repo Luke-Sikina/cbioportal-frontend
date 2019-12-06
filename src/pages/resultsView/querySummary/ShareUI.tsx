@@ -41,7 +41,8 @@ export class ShareUI extends React.Component<IShareUI, {}> {
                 const resp = await this.props.routingStore.saveRemoteSession(this.props.routingStore.query);
                 // for testing purposes we don't have links to localhost
                 sessionUrl = URL.format({
-                    hostname: (win.location.hostname.includes("localhost") ? "www.cbioportal.org" : win.location.hostname + ":8443"),
+                    hostname: win.location.hostname,
+                    port: "8443",
                     pathname: win.location.pathname,
                     protocol: win.location.protocol,
                     query: {
