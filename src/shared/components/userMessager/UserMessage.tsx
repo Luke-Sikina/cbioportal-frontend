@@ -22,14 +22,12 @@ function makeMessageKey(id:string){
 }
 
 const MESSAGE_DATA: IUserMessage[] = [
-    // ADD MESSAGE IN FOLLOWING FORMAT
-    // UNIQUE ID IS IMPORTANT B/C WE REMEMBER A MESSAGE HAS BEEN SHOWN
-    // BASED ON USERS LOCALSTORAGE
-    // {
-    //     dateEnd:100000000000000,
-    //     content: `<p>Some markup and message here</p>`,
-    //     id:'some very unique ID here, e.g. 3.0-intro',
-    // }
+    {
+        dateEnd:100000000000000,
+        content: `<strong>Announcing the new Group Comparison feature</strong>: Compare clinical and genomic features of user-defined groups of samples/patients.  <a class='btn btn-primary' href="/tutorials#group-comparison" target="_blank">View Tutorial</a>`,
+        id:'3.0-intro',
+        title:'Announcing the Group Comparison feature of cBioPortal 3.0!'
+    }
 ];
 
 @observer
