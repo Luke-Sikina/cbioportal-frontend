@@ -3158,11 +3158,12 @@ export class StudyViewPageStore {
             [this.mutationProfiles, this.oncokbAnnotatedGeneEntrezGeneIds, this.oncokbOncogeneEntrezGeneIds, this.oncokbTumorSuppressorGeneEntrezGeneIds, this.oncokbCancerGeneEntrezGeneIds] :
             [this.mutationProfiles],
         invoke: async () => {
+            var ret: GeneTableRow[];
             if (!_.isEmpty(this.mutationProfiles.result)) {
                 const fusionGenes = await internalClient.fetchFusionGenesUsingPOST({
                     studyViewFilter: this.filters
                 });
-                return fusionGenes.map(item => {
+                ret = fusionGenes.map(item => {
                     return {
                         ...item,
                         uniqueKey: getMutationUniqueKey(item.entrezGeneId, item.hugoGeneSymbol),
@@ -3172,9 +3173,19 @@ export class StudyViewPageStore {
                         isCancerGene: this.oncokbCancerGeneFilterEnabled ? this.oncokbCancerGeneEntrezGeneIds.result.includes(item.entrezGeneId) : false
                     };
                 });
+ 
             } else {
-                return [];
+                ret = [];
             }
+            // Internal, temporary bugfix:
+            // We felt that it was misleading to have the fusions plot displayed when there is no fusion data
+            // for the study. This just hides the plot on data load if there was no data loaded.
+            // There is a long term fix for this in the works. When that lands, this
+            // logic should be removed.
+            if (ret.length === 0) {
+                this.changeChartVisibility(UniqueKey.FUSION_GENES_TABLE, false);
+            }
+            return ret;
         },
         onError: (error => {
         }),
