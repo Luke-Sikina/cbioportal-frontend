@@ -25,7 +25,7 @@ function makeMessageKey(id:string){
 const MESSAGE_DATA: IUserMessage[] = [
     {
         dateEnd:100000000000000,
-        content: `<strong>Announcing the new Group Comparison feature</strong>: Compare clinical and genomic features of user-defined groups of samples/patients.  <a class='btn btn-primary' href="/tutorials#group-comparison" target="_blank">View Tutorial</a>`,
+        content: `<strong>Announcing the new Group Comparison feature</strong>: Compare clinical and genomic features of user-defined groups of samples/patients.  <a class='btn btn-primary' href="https://cbioportal.org/tutorials#group-comparison" target="_blank">View Tutorial</a>`,
         id:'3.0-intro',
         title:'Announcing the Group Comparison feature of cBioPortal 3.0!'
     }
