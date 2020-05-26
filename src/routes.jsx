@@ -36,6 +36,9 @@ import RMATLAB from 'bundle-loader?lazy!babel-loader!./pages/staticPages/rmatlab
 import Tutorials from 'bundle-loader?lazy!babel-loader!./pages/staticPages/tutorials/Tutorials';
 import Visualize from 'bundle-loader?lazy!babel-loader!./pages/staticPages/visualize/Visualize';
 import AboutUs from 'bundle-loader?lazy!babel-loader!./pages/staticPages/aboutus/AboutUs';
+import Importer from 'bundle-loader?lazy!babel-loader!./pages/staticPages/importer/Importer';
+import ImporterStudy from 'bundle-loader?lazy!babel-loader!./pages/staticPages/importer/ImporterStudy';
+import LogDisplay from 'bundle-loader?lazy!babel-loader!./pages/staticPages/importer/LogDisplay';
 import News from 'bundle-loader?lazy!babel-loader!./pages/staticPages/news/News';
 import FAQ from 'bundle-loader?lazy!babel-loader!./pages/staticPages/faq/FAQ';
 import OQL from 'bundle-loader?lazy!babel-loader!./pages/staticPages/oql/OQL';
@@ -206,6 +209,27 @@ export const makeRoutes = routing => {
                     $(document).scrollTop(0);
                 }}
                 getComponent={lazyLoadComponent(AboutUs)}
+            />
+            <Route
+                path="/importer"
+                onEnter={() => {
+                    $(document).scrollTop(0);
+                }}
+                getComponent={lazyLoadComponent(Importer)}
+            />
+             <Route
+                path="/import/:studyId"
+                onEnter={() => {
+                    $(document).scrollTop(0);
+                }}
+                getComponent={lazyLoadComponent(ImporterStudy)}
+            />
+            <Route
+                path="/logs/:logType/:studyId/:logId"
+                onEnter={() => {
+                    $(document).scrollTop(0);
+                }}
+                getComponent={lazyLoadComponent(LogDisplay)}
             />
             <Route
                 path="/news"

@@ -343,6 +343,52 @@ export type GroupStatistics = {
         'standardDeviation': number
 
 };
+export type ImportLog = {
+    'id': number
+
+        'logType': string
+
+        'passed': string
+
+        'rawText': string
+
+        'requester': string
+
+        'startDate': string
+
+        'studyId': string
+
+        'testRun': boolean
+
+        'text': string
+
+};
+export type ImportStudy = {
+    'importDate': string
+
+        'importLogs': Array < string >
+
+        'importRunning': boolean
+
+        'imported': boolean
+
+        'name': string
+
+        'studyId': string
+
+        'studyPath': string
+
+        'users': Array < string >
+
+        'validated': boolean
+
+        'validationDate': string
+
+        'validationLogs': Array < string >
+
+        'validationRunning': boolean
+
+};
 export type Info = {
     'dbVersion': string
 
@@ -2673,6 +2719,293 @@ export default class CBioPortalAPIInternal {
                 return response.body;
             });
         };
+    getAllImporterStudiesUsingGETURL(parameters: {
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/importer/';
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Get a list of all studies in the importer
+     * @method
+     * @name CBioPortalAPIInternal#getAllImporterStudiesUsingGET
+     */
+    getAllImporterStudiesUsingGETWithHttpInfo(parameters: {
+        $queryParameters ? : any,
+            $domain ? : string
+    }): Promise < request.Response > {
+        const domain = parameters.$domain ? parameters.$domain : this.domain;
+        const errorHandlers = this.errorHandlers;
+        const request = this.request;
+        let path = '/importer/';
+        let body: any;
+        let queryParameters: any = {};
+        let headers: any = {};
+        let form: any = {};
+        return new Promise(function(resolve, reject) {
+            headers['Accept'] = 'application/json';
+
+            if (parameters.$queryParameters) {
+                Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                    var parameter = parameters.$queryParameters[parameterName];
+                    queryParameters[parameterName] = parameter;
+                });
+            }
+
+            request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+        });
+    };
+
+    /**
+     * Get a list of all studies in the importer
+     * @method
+     * @name CBioPortalAPIInternal#getAllImporterStudiesUsingGET
+     */
+    getAllImporterStudiesUsingGET(parameters: {
+            $queryParameters ? : any,
+                $domain ? : string
+        }): Promise < Array < ImportStudy >
+        > {
+            return this.getAllImporterStudiesUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
+                return response.body;
+            });
+        };
+    getImporterStudyUsingGETURL(parameters: {
+        'studyId': string,
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/importer/{studyId}';
+
+        path = path.replace('{studyId}', parameters['studyId'] + '');
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Get a list of all studies in the importer
+     * @method
+     * @name CBioPortalAPIInternal#getImporterStudyUsingGET
+     * @param {string} studyId - studyId
+     */
+    getImporterStudyUsingGETWithHttpInfo(parameters: {
+        'studyId': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < request.Response > {
+        const domain = parameters.$domain ? parameters.$domain : this.domain;
+        const errorHandlers = this.errorHandlers;
+        const request = this.request;
+        let path = '/importer/{studyId}';
+        let body: any;
+        let queryParameters: any = {};
+        let headers: any = {};
+        let form: any = {};
+        return new Promise(function(resolve, reject) {
+            headers['Accept'] = 'application/json';
+
+            path = path.replace('{studyId}', parameters['studyId'] + '');
+
+            if (parameters['studyId'] === undefined) {
+                reject(new Error('Missing required  parameter: studyId'));
+                return;
+            }
+
+            if (parameters.$queryParameters) {
+                Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                    var parameter = parameters.$queryParameters[parameterName];
+                    queryParameters[parameterName] = parameter;
+                });
+            }
+
+            request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+        });
+    };
+
+    /**
+     * Get a list of all studies in the importer
+     * @method
+     * @name CBioPortalAPIInternal#getImporterStudyUsingGET
+     * @param {string} studyId - studyId
+     */
+    getImporterStudyUsingGET(parameters: {
+        'studyId': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < ImportStudy > {
+        return this.getImporterStudyUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
+            return response.body;
+        });
+    };
+    runTrialImportUsingGETURL(parameters: {
+        'studyId': string,
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/importer/{studyId}/import';
+
+        path = path.replace('{studyId}', parameters['studyId'] + '');
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Run a trial import of the studyId
+     * @method
+     * @name CBioPortalAPIInternal#runTrialImportUsingGET
+     * @param {string} studyId - studyId
+     */
+    runTrialImportUsingGETWithHttpInfo(parameters: {
+        'studyId': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < request.Response > {
+        const domain = parameters.$domain ? parameters.$domain : this.domain;
+        const errorHandlers = this.errorHandlers;
+        const request = this.request;
+        let path = '/importer/{studyId}/import';
+        let body: any;
+        let queryParameters: any = {};
+        let headers: any = {};
+        let form: any = {};
+        return new Promise(function(resolve, reject) {
+            headers['Accept'] = 'application/json';
+
+            path = path.replace('{studyId}', parameters['studyId'] + '');
+
+            if (parameters['studyId'] === undefined) {
+                reject(new Error('Missing required  parameter: studyId'));
+                return;
+            }
+
+            if (parameters.$queryParameters) {
+                Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                    var parameter = parameters.$queryParameters[parameterName];
+                    queryParameters[parameterName] = parameter;
+                });
+            }
+
+            request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+        });
+    };
+
+    /**
+     * Run a trial import of the studyId
+     * @method
+     * @name CBioPortalAPIInternal#runTrialImportUsingGET
+     * @param {string} studyId - studyId
+     */
+    runTrialImportUsingGET(parameters: {
+        'studyId': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < string > {
+        return this.runTrialImportUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
+            return response.body;
+        });
+    };
+    runTrialValidationUsingGETURL(parameters: {
+        'studyId': string,
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/importer/{studyId}/validate';
+
+        path = path.replace('{studyId}', parameters['studyId'] + '');
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Run a trial validation of the studyId
+     * @method
+     * @name CBioPortalAPIInternal#runTrialValidationUsingGET
+     * @param {string} studyId - studyId
+     */
+    runTrialValidationUsingGETWithHttpInfo(parameters: {
+        'studyId': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < request.Response > {
+        const domain = parameters.$domain ? parameters.$domain : this.domain;
+        const errorHandlers = this.errorHandlers;
+        const request = this.request;
+        let path = '/importer/{studyId}/validate';
+        let body: any;
+        let queryParameters: any = {};
+        let headers: any = {};
+        let form: any = {};
+        return new Promise(function(resolve, reject) {
+            headers['Accept'] = 'application/json';
+
+            path = path.replace('{studyId}', parameters['studyId'] + '');
+
+            if (parameters['studyId'] === undefined) {
+                reject(new Error('Missing required  parameter: studyId'));
+                return;
+            }
+
+            if (parameters.$queryParameters) {
+                Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                    var parameter = parameters.$queryParameters[parameterName];
+                    queryParameters[parameterName] = parameter;
+                });
+            }
+
+            request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+        });
+    };
+
+    /**
+     * Run a trial validation of the studyId
+     * @method
+     * @name CBioPortalAPIInternal#runTrialValidationUsingGET
+     * @param {string} studyId - studyId
+     */
+    runTrialValidationUsingGET(parameters: {
+        'studyId': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < string > {
+        return this.runTrialValidationUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
+            return response.body;
+        });
+    };
     getInfoUsingGETURL(parameters: {
         $queryParameters ? : any
     }): string {
@@ -2731,6 +3064,199 @@ export default class CBioPortalAPIInternal {
             $domain ? : string
     }): Promise < Info > {
         return this.getInfoUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
+            return response.body;
+        });
+    };
+    getAllLogsForStudyUsingGETURL(parameters: {
+        'logType': string,
+        'studyId': string,
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/logs/{logType}/{studyId}';
+
+        path = path.replace('{logType}', parameters['logType'] + '');
+
+        path = path.replace('{studyId}', parameters['studyId'] + '');
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Get the specified log file
+     * @method
+     * @name CBioPortalAPIInternal#getAllLogsForStudyUsingGET
+     * @param {string} logType - logType
+     * @param {string} studyId - studyId
+     */
+    getAllLogsForStudyUsingGETWithHttpInfo(parameters: {
+        'logType': string,
+        'studyId': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < request.Response > {
+        const domain = parameters.$domain ? parameters.$domain : this.domain;
+        const errorHandlers = this.errorHandlers;
+        const request = this.request;
+        let path = '/logs/{logType}/{studyId}';
+        let body: any;
+        let queryParameters: any = {};
+        let headers: any = {};
+        let form: any = {};
+        return new Promise(function(resolve, reject) {
+            headers['Accept'] = 'application/json';
+
+            path = path.replace('{logType}', parameters['logType'] + '');
+
+            if (parameters['logType'] === undefined) {
+                reject(new Error('Missing required  parameter: logType'));
+                return;
+            }
+
+            path = path.replace('{studyId}', parameters['studyId'] + '');
+
+            if (parameters['studyId'] === undefined) {
+                reject(new Error('Missing required  parameter: studyId'));
+                return;
+            }
+
+            if (parameters.$queryParameters) {
+                Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                    var parameter = parameters.$queryParameters[parameterName];
+                    queryParameters[parameterName] = parameter;
+                });
+            }
+
+            request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+        });
+    };
+
+    /**
+     * Get the specified log file
+     * @method
+     * @name CBioPortalAPIInternal#getAllLogsForStudyUsingGET
+     * @param {string} logType - logType
+     * @param {string} studyId - studyId
+     */
+    getAllLogsForStudyUsingGET(parameters: {
+            'logType': string,
+            'studyId': string,
+            $queryParameters ? : any,
+            $domain ? : string
+        }): Promise < Array < ImportLog >
+        > {
+            return this.getAllLogsForStudyUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
+                return response.body;
+            });
+        };
+    getLogUsingGETURL(parameters: {
+        'logType': string,
+        'studyId': string,
+        'id': string,
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/logs/{logType}/{studyId}/{id}';
+
+        path = path.replace('{logType}', parameters['logType'] + '');
+
+        path = path.replace('{studyId}', parameters['studyId'] + '');
+
+        path = path.replace('{id}', parameters['id'] + '');
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Get the specified log file
+     * @method
+     * @name CBioPortalAPIInternal#getLogUsingGET
+     * @param {string} logType - logType
+     * @param {string} studyId - studyId
+     * @param {string} id - id
+     */
+    getLogUsingGETWithHttpInfo(parameters: {
+        'logType': string,
+        'studyId': string,
+        'id': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < request.Response > {
+        const domain = parameters.$domain ? parameters.$domain : this.domain;
+        const errorHandlers = this.errorHandlers;
+        const request = this.request;
+        let path = '/logs/{logType}/{studyId}/{id}';
+        let body: any;
+        let queryParameters: any = {};
+        let headers: any = {};
+        let form: any = {};
+        return new Promise(function(resolve, reject) {
+            headers['Accept'] = 'application/json';
+
+            path = path.replace('{logType}', parameters['logType'] + '');
+
+            if (parameters['logType'] === undefined) {
+                reject(new Error('Missing required  parameter: logType'));
+                return;
+            }
+
+            path = path.replace('{studyId}', parameters['studyId'] + '');
+
+            if (parameters['studyId'] === undefined) {
+                reject(new Error('Missing required  parameter: studyId'));
+                return;
+            }
+
+            path = path.replace('{id}', parameters['id'] + '');
+
+            if (parameters['id'] === undefined) {
+                reject(new Error('Missing required  parameter: id'));
+                return;
+            }
+
+            if (parameters.$queryParameters) {
+                Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                    var parameter = parameters.$queryParameters[parameterName];
+                    queryParameters[parameterName] = parameter;
+                });
+            }
+
+            request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+        });
+    };
+
+    /**
+     * Get the specified log file
+     * @method
+     * @name CBioPortalAPIInternal#getLogUsingGET
+     * @param {string} logType - logType
+     * @param {string} studyId - studyId
+     * @param {string} id - id
+     */
+    getLogUsingGET(parameters: {
+        'logType': string,
+        'studyId': string,
+        'id': string,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < ImportLog > {
+        return this.getLogUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
             return response.body;
         });
     };
