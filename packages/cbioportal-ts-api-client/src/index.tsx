@@ -48,5 +48,7 @@ export {
     GenomicDataBinCountFilter,
     GenomicDataBinFilter,
     GenomicDataFilter,
+    ImportLog,
+    ImportStudy,
     default as CBioPortalAPIInternal,
 } from './generated/CBioPortalAPIInternal';

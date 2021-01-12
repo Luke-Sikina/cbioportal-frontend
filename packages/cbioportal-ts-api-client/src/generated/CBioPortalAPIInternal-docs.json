@@ -56,6 +56,10 @@
       "description": " "
     },
     {
+      "name": "Import",
+      "description": " "
+    },
+    {
       "name": "Info",
       "description": " "
     },
@@ -1761,6 +1765,180 @@
         "deprecated": false
       }
     },
+    "/importer/": {
+      "get": {
+        "tags": [
+          "Import"
+        ],
+        "summary": "Get a list of all studies in the importer",
+        "operationId": "getAllImporterStudiesUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ImportStudy"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/importer/{studyId}": {
+      "get": {
+        "tags": [
+          "Import"
+        ],
+        "summary": "Get study details",
+        "operationId": "getImporterStudyUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "studyId",
+            "in": "path",
+            "description": "studyId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ImportStudy"
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/importer/{studyId}/import": {
+      "get": {
+        "tags": [
+          "Import"
+        ],
+        "summary": "Run a trial import of the studyId",
+        "operationId": "runTrialImportUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "studyId",
+            "in": "path",
+            "description": "studyId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/importer/{studyId}/validate": {
+      "get": {
+        "tags": [
+          "Import"
+        ],
+        "summary": "Run a trial validation of the studyId",
+        "operationId": "runTrialValidationUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "studyId",
+            "in": "path",
+            "description": "studyId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
     "/info": {
       "get": {
         "tags": [
@@ -1776,6 +1954,90 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/Info"
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/logs/{logType}/{studyId}": {
+      "get": {
+        "tags": [
+          "Import"
+        ],
+        "summary": "Get the specified log file",
+        "operationId": "getAllLogsForStudyUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "logType",
+            "in": "path",
+            "description": "logType",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "studyId",
+            "in": "path",
+            "description": "studyId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ImportLog"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/logs/{logType}/{studyId}/{id}": {
+      "get": {
+        "tags": [
+          "Import"
+        ],
+        "summary": "Get the specified log file",
+        "operationId": "getLogUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "logType",
+            "in": "path",
+            "description": "logType",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "studyId",
+            "in": "path",
+            "description": "studyId",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ImportLog"
             }
           }
         },
@@ -3363,6 +3625,94 @@
         }
       },
       "title": "GroupStatistics"
+    },
+    "ImportLog": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "logType": {
+          "type": "string"
+        },
+        "passed": {
+          "type": "string"
+        },
+        "rawText": {
+          "type": "string"
+        },
+        "requester": {
+          "type": "string"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "studyId": {
+          "type": "string"
+        },
+        "testRun": {
+          "type": "boolean"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "title": "ImportLog"
+    },
+    "ImportStudy": {
+      "type": "object",
+      "properties": {
+        "importDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "importLogs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "importRunning": {
+          "type": "boolean"
+        },
+        "imported": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "studyId": {
+          "type": "string"
+        },
+        "studyPath": {
+          "type": "string"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validated": {
+          "type": "boolean"
+        },
+        "validationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validationLogs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validationRunning": {
+          "type": "boolean"
+        }
+      },
+      "title": "ImportStudy"
     },
     "Info": {
       "type": "object",
