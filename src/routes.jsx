@@ -90,9 +90,15 @@ const GroupComparisonPage = SuspenseWrapper(
 const ErrorPage = SuspenseWrapper(
     React.lazy(() => import('./pages/resultsView/ErrorPage'))
 );
-import Importer from 'bundle-loader?lazy!babel-loader!./pages/staticPages/importer/Importer';
-import ImporterStudy from 'bundle-loader?lazy!babel-loader!./pages/staticPages/importer/ImporterStudy';
-import LogDisplay from 'bundle-loader?lazy!babel-loader!./pages/staticPages/importer/LogDisplay';
+const Importer = SuspenseWrapper(
+    React.lazy(() => import('./pages/staticPages/importer/Importer'))
+);
+const ImporterStudy = SuspenseWrapper(
+    React.lazy(() => import('./pages/staticPages/importer/ImporterStudy'))
+);
+const LogDisplay = SuspenseWrapper(
+    React.lazy(() => import('./pages/staticPages/importer/LogDisplay'))
+);
 
 import $ from 'jquery';
 import { getBrowserWindow } from 'cbioportal-frontend-commons';
