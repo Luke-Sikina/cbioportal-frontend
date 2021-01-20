@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import autobind from 'autobind-decorator';
 import { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
@@ -26,6 +26,7 @@ export default class Importer extends React.Component<{}, {}> {
 
     constructor(_: {}) {
         super(_);
+        console.log('howdy');
     }
 
     @observable
@@ -45,7 +46,7 @@ export default class Importer extends React.Component<{}, {}> {
     renderStudy(study: ImportStudy): JSX.Element {
         return (
             <tr className={study.imported ? 'positive' : 'negative'}>
-                <Link to={`/import/${study.studyId}`}>
+                <Link to={`/import/${study.studyId}`} id={study.name}>
                     <span>{study.name}</span>
                 </Link>
                 <td>{dateOrNever(study.validationDate)}</td>
@@ -66,6 +67,10 @@ export default class Importer extends React.Component<{}, {}> {
 
         if (this.studies.isPending) {
             return <div>Loading...</div>;
+        }
+
+        if (this.studies.isError) {
+            return <div>Error loading study.</div>;
         }
 
         return (

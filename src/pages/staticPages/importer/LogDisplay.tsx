@@ -5,7 +5,7 @@ import { MobxPromiseUnionType } from 'mobxpromise';
 import { remoteData } from 'cbioportal-frontend-commons';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { dateOrNever } from './importerUtil';
 
 type LogDisplayProps = {
@@ -34,7 +34,6 @@ export default class LogDisplay extends React.Component<LogDisplayProps, {}> {
 
     constructor(props: LogDisplayProps) {
         super(props);
-        console.log(this.props);
 
         this.log = remoteData<ImportLog>({
             await: () => [],

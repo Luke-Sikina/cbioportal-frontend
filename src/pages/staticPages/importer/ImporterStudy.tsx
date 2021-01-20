@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
 import { MobxPromiseUnionType } from 'mobxpromise';
@@ -31,8 +31,10 @@ const VALIDATING_TEXT =
     ' depending on the size of your study. Refresh the page to see if it has completed.';
 
 export type ImporterStudyProps = {
-    routeParams: {
-        studyId: string;
+    match: {
+        params: {
+            studyId: string;
+        };
     };
 };
 
@@ -61,12 +63,13 @@ export default class ImporterStudy extends React.Component<
     constructor(props: ImporterStudyProps) {
         super(props);
         const self = this;
+        const studyId = props.match.params.studyId;
 
         this.study = remoteData<ImportStudy>({
             await: () => [],
             invoke: async () => {
                 return internalclient.getImporterStudyUsingGET({
-                    studyId: props.routeParams.studyId,
+                    studyId: studyId,
                 });
             },
             onResult: (study: ImportStudy) => {
@@ -79,7 +82,7 @@ export default class ImporterStudy extends React.Component<
             invoke: async () => {
                 return internalclient.getAllLogsForStudyUsingGET({
                     logType: 'import',
-                    studyId: props.routeParams.studyId,
+                    studyId: studyId,
                 });
             },
         });
@@ -89,7 +92,7 @@ export default class ImporterStudy extends React.Component<
             invoke: async () => {
                 return internalclient.getAllLogsForStudyUsingGET({
                     logType: 'validation',
-                    studyId: props.routeParams.studyId,
+                    studyId: studyId,
                 });
             },
         });
