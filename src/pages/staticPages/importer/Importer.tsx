@@ -26,7 +26,6 @@ export default class Importer extends React.Component<{}, {}> {
 
     constructor(_: {}) {
         super(_);
-        console.log('howdy');
     }
 
     @observable

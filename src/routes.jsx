@@ -350,26 +350,11 @@ export const makeRoutes = routing => {
                         )
                     )}
                 />
-                <Route
-                    path="/importer"
-                    onEnter={() => {
-                        $(document).scrollTop(0);
-                    }}
-                    getComponent={lazyLoadComponent(Importer)}
-                />
-                <Route
-                    path="/import/:studyId"
-                    onEnter={() => {
-                        $(document).scrollTop(0);
-                    }}
-                    getComponent={lazyLoadComponent(ImporterStudy)}
-                />
+                <Route path="/importer" component={Importer} />
+                <Route path="/import/:studyId" component={ImporterStudy} />
                 <Route
                     path="/logs/:logType/:studyId/:logId"
-                    onEnter={() => {
-                        $(document).scrollTop(0);
-                    }}
-                    getComponent={lazyLoadComponent(LogDisplay)}
+                    component={LogDisplay}
                 />
                 <Route
                     path="/comparison/:tab?"
