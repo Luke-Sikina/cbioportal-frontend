@@ -99,6 +99,11 @@ const ImporterStudy = SuspenseWrapper(
 const LogDisplay = SuspenseWrapper(
     React.lazy(() => import('./pages/staticPages/importer/LogDisplay'))
 );
+const DownloadProfileData = SuspenseWrapper(
+    React.lazy(() =>
+        import('./pages/staticPages/downloadProfileData/DownloadProfileData')
+    )
+);
 
 import $ from 'jquery';
 import { getBrowserWindow } from 'cbioportal-frontend-commons';
@@ -356,6 +361,11 @@ export const makeRoutes = routing => {
                     path="/logs/:logType/:studyId/:logId"
                     component={LogDisplay}
                 />
+                <Route
+                    path="/downloadProfileData"
+                    component={DownloadProfileData}
+                />
+
                 <Route
                     path="/comparison/:tab?"
                     component={ScrollToTop(
