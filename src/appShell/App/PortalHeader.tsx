@@ -31,6 +31,14 @@ export default class PortalHeader extends React.Component<
             },
 
             {
+                id: 'download_profile_data',
+                text: 'Download Profile Data',
+                address: '/DownloadProfileData',
+                internal: true,
+                hide: () => false,
+            },
+
+            {
                 id: 'webAPI',
                 text: 'Web API',
                 address: '/webAPI',

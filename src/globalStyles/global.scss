@@ -325,7 +325,7 @@ th.reactable-header-sort-asc:after {
     line-height: 0; /* Collapse the original line */
 
     &::after {
-        content: '✖';
+        content: 'x';
         text-indent: 0;
         display: block;
         line-height: initial; /* New content takes up original line height */
@@ -334,7 +334,7 @@ th.reactable-header-sort-asc:after {
 
 .modal-header .close {
     &::before {
-        content: '✖';
+        content: 'x';
     }
     span {
         display: none;
