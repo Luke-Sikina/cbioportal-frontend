@@ -9,15 +9,9 @@ import { Link } from 'react-router-dom';
 import { dateOrNever } from './importerUtil';
 
 type LogDisplayProps = {
-    routeParams: {
-        logType: string;
-        studyId: string;
-        logId: string;
-    };
+    match: any;
     location: {
-        query: {
-            raw: string;
-        };
+        search: any;
     };
 };
 
@@ -39,16 +33,19 @@ export default class LogDisplay extends React.Component<LogDisplayProps, {}> {
             await: () => [],
             invoke: async () => {
                 return internalClient.getLogUsingGET({
-                    logType: this.props.routeParams.logType,
-                    studyId: this.props.routeParams.studyId,
-                    id: this.props.routeParams.logId,
+                    logType: this.props.match.params.logType,
+                    studyId: this.props.match.params.studyId,
+                    id: this.props.match.params.logId,
                 });
             },
         });
     }
 
     renderLog(log: ImportLog): JSX.Element {
-        if (this.props.location.query.raw === 'false') {
+        if (
+            new URLSearchParams(this.props.location.search).get('raw') ===
+            'false'
+        ) {
             return <p dangerouslySetInnerHTML={{ __html: log.text }} />;
         }
         if (!log.rawText) {
