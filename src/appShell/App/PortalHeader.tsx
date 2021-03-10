@@ -14,6 +14,7 @@ import SocialAuthButton from '../../shared/components/SocialAuthButton';
 import { Dropdown } from 'react-bootstrap';
 import { DataAccessTokensDropdown } from '../../shared/components/dataAccessTokens/DataAccessTokensDropdown';
 import { observable } from 'mobx';
+import LinkOut from './linkOut/LinkOut';
 
 @observer
 export default class PortalHeader extends React.Component<
@@ -59,8 +60,8 @@ export default class PortalHeader extends React.Component<
             {
                 id: 'tutorials',
                 text: 'Tutorials/Webinars',
-                address: '/tutorials',
-                internal: true,
+                address: 'https://cbioportal.org/tutorials',
+                internal: false,
                 hide: () =>
                     AppConfig.serverConfig.skin_show_tutorials_tab === false,
             },
@@ -102,7 +103,7 @@ export default class PortalHeader extends React.Component<
             {
                 id: 'installation-map',
                 text: 'cBioPortal Installations',
-                address: '/installations',
+                address: 'https://cbioportal.org/installations',
                 internal: false,
                 hide: () => !AppConfig.serverConfig.installation_map_url,
             },
@@ -122,7 +123,7 @@ export default class PortalHeader extends React.Component<
                             {tab.text}
                         </NavLink>
                     ) : (
-                        <a href={tab.address}>{tab.text}</a>
+                        <LinkOut text={tab.text} link={tab.address} />
                     )}
                 </li>
             );

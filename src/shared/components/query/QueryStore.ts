@@ -17,6 +17,7 @@ import {
     Gene,
     Sample,
     SampleFilter,
+    StudyOverlap,
 } from 'cbioportal-ts-api-client';
 import { Geneset } from 'cbioportal-ts-api-client';
 import CancerStudyTreeData from './CancerStudyTreeData';
@@ -1372,6 +1373,13 @@ export class QueryStore {
             .filter(_.identity);
     }
 
+    @computed
+    public get selectedStudiesSet() {
+        return new Set<String>(
+            this.selectableSelectedStudies.map(s => s.studyId)
+        );
+    }
+
     public isVirtualStudy(studyId: string): boolean {
         // if the study id doesn't correspond to one in this.cancerStudies, then its a virtual Study
         return !this.cancerStudyIdsSet.result[studyId];
@@ -1415,14 +1423,31 @@ export class QueryStore {
     }
 
     @computed
-    public get getOverlappingStudiesMap() {
-        const overlappingStudyGroups = getOverlappingStudies(
-            this.selectableSelectedStudies
-        );
-        return _.chain(overlappingStudyGroups)
-            .flatten()
-            .keyBy((study: CancerStudy) => study.studyId)
-            .value();
+    private get overlappingStudiesMap(): Map<string, string[]> {
+        if (this.overlappingStudies.isPending) {
+            return new Map<string, string[]>();
+        }
+
+        var studies = this.overlappingStudies.result as StudyOverlap[];
+        return studies.reduce((prev, s) => {
+            prev.set(s.studyId, s.overlappingStudyIds);
+            return prev;
+        }, new Map<string, string[]>());
+    }
+
+    public findOverlappingStudiesForStudy(studyId: string): string[] {
+        const selectedStudies = new Set(this.selectableSelectedStudyIds);
+        const overlappingStudies = this.overlappingStudiesMap.get(studyId);
+
+        if (
+            !overlappingStudies ||
+            overlappingStudies.length == 0 ||
+            selectedStudies.size == 0
+        ) {
+            return [];
+        }
+
+        return overlappingStudies.filter(o => selectedStudies.has(o));
     }
 
     @computed
@@ -1750,6 +1775,13 @@ export class QueryStore {
                 this.defaultSelectedSampleListId
             );
             return hierarchyData;
+        },
+    });
+
+    readonly overlappingStudies = remoteData<StudyOverlap[]>({
+        await: () => [],
+        invoke: async () => {
+            return client.getStudiesWithOverlappingSamplesUsingGET({});
         },
     });
 

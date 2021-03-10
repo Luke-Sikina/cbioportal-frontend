@@ -455,7 +455,9 @@ export type ImportLog = {
 
 };
 export type ImportStudy = {
-    'importDate': string
+    'backupPath': string
+
+        'importDate': string
 
         'importLogs': Array < string >
 
@@ -4104,10 +4106,34 @@ export default class CBioPortalAPIInternal {
         });
     };
     getAllImporterStudiesUsingGETURL(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
+        'principal' ? : {},
         $queryParameters ? : any
     }): string {
         let queryParameters: any = {};
         let path = '/importer/';
+        if (parameters['authenticated'] !== undefined) {
+            queryParameters['authenticated'] = parameters['authenticated'];
+        }
+
+        if (parameters['authorities0Authority'] !== undefined) {
+            queryParameters['authorities[0].authority'] = parameters['authorities0Authority'];
+        }
+
+        if (parameters['credentials'] !== undefined) {
+            queryParameters['credentials'] = parameters['credentials'];
+        }
+
+        if (parameters['details'] !== undefined) {
+            queryParameters['details'] = parameters['details'];
+        }
+
+        if (parameters['principal'] !== undefined) {
+            queryParameters['principal'] = parameters['principal'];
+        }
 
         if (parameters.$queryParameters) {
             Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
@@ -4123,8 +4149,18 @@ export default class CBioPortalAPIInternal {
      * Get a list of all studies in the importer
      * @method
      * @name CBioPortalAPIInternal#getAllImporterStudiesUsingGET
+     * @param {boolean} authenticated - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {string} authorities0Authority - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} credentials - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} details - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} principal - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      */
     getAllImporterStudiesUsingGETWithHttpInfo(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
+        'principal' ? : {},
         $queryParameters ? : any,
             $domain ? : string
     }): Promise < request.Response > {
@@ -4138,6 +4174,26 @@ export default class CBioPortalAPIInternal {
         let form: any = {};
         return new Promise(function(resolve, reject) {
             headers['Accept'] = 'application/json';
+
+            if (parameters['authenticated'] !== undefined) {
+                queryParameters['authenticated'] = parameters['authenticated'];
+            }
+
+            if (parameters['authorities0Authority'] !== undefined) {
+                queryParameters['authorities[0].authority'] = parameters['authorities0Authority'];
+            }
+
+            if (parameters['credentials'] !== undefined) {
+                queryParameters['credentials'] = parameters['credentials'];
+            }
+
+            if (parameters['details'] !== undefined) {
+                queryParameters['details'] = parameters['details'];
+            }
+
+            if (parameters['principal'] !== undefined) {
+                queryParameters['principal'] = parameters['principal'];
+            }
 
             if (parameters.$queryParameters) {
                 Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
@@ -4155,8 +4211,18 @@ export default class CBioPortalAPIInternal {
      * Get a list of all studies in the importer
      * @method
      * @name CBioPortalAPIInternal#getAllImporterStudiesUsingGET
+     * @param {boolean} authenticated - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {string} authorities0Authority - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} credentials - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} details - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} principal - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      */
     getAllImporterStudiesUsingGET(parameters: {
+            'authenticated' ? : boolean,
+            'authorities0Authority' ? : string,
+            'credentials' ? : {},
+            'details' ? : {},
+            'principal' ? : {},
             $queryParameters ? : any,
                 $domain ? : string
         }): Promise < Array < ImportStudy >
@@ -4166,11 +4232,35 @@ export default class CBioPortalAPIInternal {
             });
         };
     getImporterStudyUsingGETURL(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
+        'principal' ? : {},
         'studyId': string,
         $queryParameters ? : any
     }): string {
         let queryParameters: any = {};
         let path = '/importer/{studyId}';
+        if (parameters['authenticated'] !== undefined) {
+            queryParameters['authenticated'] = parameters['authenticated'];
+        }
+
+        if (parameters['authorities0Authority'] !== undefined) {
+            queryParameters['authorities[0].authority'] = parameters['authorities0Authority'];
+        }
+
+        if (parameters['credentials'] !== undefined) {
+            queryParameters['credentials'] = parameters['credentials'];
+        }
+
+        if (parameters['details'] !== undefined) {
+            queryParameters['details'] = parameters['details'];
+        }
+
+        if (parameters['principal'] !== undefined) {
+            queryParameters['principal'] = parameters['principal'];
+        }
 
         path = path.replace('{studyId}', parameters['studyId'] + '');
 
@@ -4188,12 +4278,22 @@ export default class CBioPortalAPIInternal {
      * Get study details
      * @method
      * @name CBioPortalAPIInternal#getImporterStudyUsingGET
+     * @param {boolean} authenticated - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {string} authorities0Authority - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} credentials - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} details - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} principal - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} studyId - studyId
      */
     getImporterStudyUsingGETWithHttpInfo(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
+        'principal' ? : {},
         'studyId': string,
         $queryParameters ? : any,
-        $domain ? : string
+            $domain ? : string
     }): Promise < request.Response > {
         const domain = parameters.$domain ? parameters.$domain : this.domain;
         const errorHandlers = this.errorHandlers;
@@ -4205,6 +4305,26 @@ export default class CBioPortalAPIInternal {
         let form: any = {};
         return new Promise(function(resolve, reject) {
             headers['Accept'] = 'application/json';
+
+            if (parameters['authenticated'] !== undefined) {
+                queryParameters['authenticated'] = parameters['authenticated'];
+            }
+
+            if (parameters['authorities0Authority'] !== undefined) {
+                queryParameters['authorities[0].authority'] = parameters['authorities0Authority'];
+            }
+
+            if (parameters['credentials'] !== undefined) {
+                queryParameters['credentials'] = parameters['credentials'];
+            }
+
+            if (parameters['details'] !== undefined) {
+                queryParameters['details'] = parameters['details'];
+            }
+
+            if (parameters['principal'] !== undefined) {
+                queryParameters['principal'] = parameters['principal'];
+            }
 
             path = path.replace('{studyId}', parameters['studyId'] + '');
 
@@ -4229,12 +4349,22 @@ export default class CBioPortalAPIInternal {
      * Get study details
      * @method
      * @name CBioPortalAPIInternal#getImporterStudyUsingGET
+     * @param {boolean} authenticated - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {string} authorities0Authority - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} credentials - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} details - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} principal - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} studyId - studyId
      */
     getImporterStudyUsingGET(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
+        'principal' ? : {},
         'studyId': string,
         $queryParameters ? : any,
-        $domain ? : string
+            $domain ? : string
     }): Promise < ImportStudy > {
         return this.getImporterStudyUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
             return response.body;
@@ -4580,14 +4710,37 @@ export default class CBioPortalAPIInternal {
         });
     };
     getAllLogsForStudyUsingGETURL(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
         'logType': string,
+        'principal' ? : {},
         'studyId': string,
         $queryParameters ? : any
     }): string {
         let queryParameters: any = {};
         let path = '/logs/{logType}/{studyId}';
+        if (parameters['authenticated'] !== undefined) {
+            queryParameters['authenticated'] = parameters['authenticated'];
+        }
+
+        if (parameters['authorities0Authority'] !== undefined) {
+            queryParameters['authorities[0].authority'] = parameters['authorities0Authority'];
+        }
+
+        if (parameters['credentials'] !== undefined) {
+            queryParameters['credentials'] = parameters['credentials'];
+        }
+
+        if (parameters['details'] !== undefined) {
+            queryParameters['details'] = parameters['details'];
+        }
 
         path = path.replace('{logType}', parameters['logType'] + '');
+        if (parameters['principal'] !== undefined) {
+            queryParameters['principal'] = parameters['principal'];
+        }
 
         path = path.replace('{studyId}', parameters['studyId'] + '');
 
@@ -4605,14 +4758,24 @@ export default class CBioPortalAPIInternal {
      * Get the specified log file
      * @method
      * @name CBioPortalAPIInternal#getAllLogsForStudyUsingGET
+     * @param {boolean} authenticated - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {string} authorities0Authority - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} credentials - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} details - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} logType - logType
+     * @param {object} principal - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} studyId - studyId
      */
     getAllLogsForStudyUsingGETWithHttpInfo(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
         'logType': string,
+        'principal' ? : {},
         'studyId': string,
         $queryParameters ? : any,
-        $domain ? : string
+            $domain ? : string
     }): Promise < request.Response > {
         const domain = parameters.$domain ? parameters.$domain : this.domain;
         const errorHandlers = this.errorHandlers;
@@ -4625,11 +4788,31 @@ export default class CBioPortalAPIInternal {
         return new Promise(function(resolve, reject) {
             headers['Accept'] = 'application/json';
 
+            if (parameters['authenticated'] !== undefined) {
+                queryParameters['authenticated'] = parameters['authenticated'];
+            }
+
+            if (parameters['authorities0Authority'] !== undefined) {
+                queryParameters['authorities[0].authority'] = parameters['authorities0Authority'];
+            }
+
+            if (parameters['credentials'] !== undefined) {
+                queryParameters['credentials'] = parameters['credentials'];
+            }
+
+            if (parameters['details'] !== undefined) {
+                queryParameters['details'] = parameters['details'];
+            }
+
             path = path.replace('{logType}', parameters['logType'] + '');
 
             if (parameters['logType'] === undefined) {
                 reject(new Error('Missing required  parameter: logType'));
                 return;
+            }
+
+            if (parameters['principal'] !== undefined) {
+                queryParameters['principal'] = parameters['principal'];
             }
 
             path = path.replace('{studyId}', parameters['studyId'] + '');
@@ -4655,14 +4838,24 @@ export default class CBioPortalAPIInternal {
      * Get the specified log file
      * @method
      * @name CBioPortalAPIInternal#getAllLogsForStudyUsingGET
+     * @param {boolean} authenticated - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {string} authorities0Authority - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} credentials - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} details - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} logType - logType
+     * @param {object} principal - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} studyId - studyId
      */
     getAllLogsForStudyUsingGET(parameters: {
+            'authenticated' ? : boolean,
+            'authorities0Authority' ? : string,
+            'credentials' ? : {},
+            'details' ? : {},
             'logType': string,
+            'principal' ? : {},
             'studyId': string,
             $queryParameters ? : any,
-            $domain ? : string
+                $domain ? : string
         }): Promise < Array < ImportLog >
         > {
             return this.getAllLogsForStudyUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
@@ -4670,17 +4863,40 @@ export default class CBioPortalAPIInternal {
             });
         };
     getLogUsingGETURL(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
         'id': string,
         'logType': string,
+        'principal' ? : {},
         'studyId': string,
         $queryParameters ? : any
     }): string {
         let queryParameters: any = {};
         let path = '/logs/{logType}/{studyId}/{id}';
+        if (parameters['authenticated'] !== undefined) {
+            queryParameters['authenticated'] = parameters['authenticated'];
+        }
+
+        if (parameters['authorities0Authority'] !== undefined) {
+            queryParameters['authorities[0].authority'] = parameters['authorities0Authority'];
+        }
+
+        if (parameters['credentials'] !== undefined) {
+            queryParameters['credentials'] = parameters['credentials'];
+        }
+
+        if (parameters['details'] !== undefined) {
+            queryParameters['details'] = parameters['details'];
+        }
 
         path = path.replace('{id}', parameters['id'] + '');
 
         path = path.replace('{logType}', parameters['logType'] + '');
+        if (parameters['principal'] !== undefined) {
+            queryParameters['principal'] = parameters['principal'];
+        }
 
         path = path.replace('{studyId}', parameters['studyId'] + '');
 
@@ -4698,16 +4914,26 @@ export default class CBioPortalAPIInternal {
      * Get the specified log file
      * @method
      * @name CBioPortalAPIInternal#getLogUsingGET
+     * @param {boolean} authenticated - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {string} authorities0Authority - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} credentials - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} details - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} id - id
      * @param {string} logType - logType
+     * @param {object} principal - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} studyId - studyId
      */
     getLogUsingGETWithHttpInfo(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
         'id': string,
         'logType': string,
+        'principal' ? : {},
         'studyId': string,
         $queryParameters ? : any,
-        $domain ? : string
+            $domain ? : string
     }): Promise < request.Response > {
         const domain = parameters.$domain ? parameters.$domain : this.domain;
         const errorHandlers = this.errorHandlers;
@@ -4719,6 +4945,22 @@ export default class CBioPortalAPIInternal {
         let form: any = {};
         return new Promise(function(resolve, reject) {
             headers['Accept'] = 'application/json';
+
+            if (parameters['authenticated'] !== undefined) {
+                queryParameters['authenticated'] = parameters['authenticated'];
+            }
+
+            if (parameters['authorities0Authority'] !== undefined) {
+                queryParameters['authorities[0].authority'] = parameters['authorities0Authority'];
+            }
+
+            if (parameters['credentials'] !== undefined) {
+                queryParameters['credentials'] = parameters['credentials'];
+            }
+
+            if (parameters['details'] !== undefined) {
+                queryParameters['details'] = parameters['details'];
+            }
 
             path = path.replace('{id}', parameters['id'] + '');
 
@@ -4734,6 +4976,10 @@ export default class CBioPortalAPIInternal {
                 return;
             }
 
+            if (parameters['principal'] !== undefined) {
+                queryParameters['principal'] = parameters['principal'];
+            }
+
             path = path.replace('{studyId}', parameters['studyId'] + '');
 
             if (parameters['studyId'] === undefined) {
@@ -4757,16 +5003,26 @@ export default class CBioPortalAPIInternal {
      * Get the specified log file
      * @method
      * @name CBioPortalAPIInternal#getLogUsingGET
+     * @param {boolean} authenticated - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {string} authorities0Authority - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} credentials - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
+     * @param {object} details - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} id - id
      * @param {string} logType - logType
+     * @param {object} principal - A web service for supplying JSON formatted data to cBioPortal clients. Please note that this API is currently in beta and subject to change.
      * @param {string} studyId - studyId
      */
     getLogUsingGET(parameters: {
+        'authenticated' ? : boolean,
+        'authorities0Authority' ? : string,
+        'credentials' ? : {},
+        'details' ? : {},
         'id': string,
         'logType': string,
+        'principal' ? : {},
         'studyId': string,
         $queryParameters ? : any,
-        $domain ? : string
+            $domain ? : string
     }): Promise < ImportLog > {
         return this.getLogUsingGETWithHttpInfo(parameters).then(function(response: request.Response) {
             return response.body;

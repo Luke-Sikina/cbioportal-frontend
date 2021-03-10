@@ -1775,6 +1775,38 @@
         "produces": [
           "application/json"
         ],
+        "parameters": [
+          {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1800,6 +1832,36 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
           {
             "name": "studyId",
             "in": "path",
@@ -1972,11 +2034,41 @@
         ],
         "parameters": [
           {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
             "name": "logType",
             "in": "path",
             "description": "logType",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
           },
           {
             "name": "studyId",
@@ -2012,6 +2104,30 @@
         ],
         "parameters": [
           {
+            "name": "authenticated",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "authorities[0].authority",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credentials",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
+            "name": "details",
+            "in": "query",
+            "required": false,
+            "type": "object"
+          },
+          {
             "name": "id",
             "in": "path",
             "description": "id",
@@ -2024,6 +2140,12 @@
             "description": "logType",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "principal",
+            "in": "query",
+            "required": false,
+            "type": "object"
           },
           {
             "name": "studyId",
@@ -3664,6 +3786,9 @@
     "ImportStudy": {
       "type": "object",
       "properties": {
+        "backupPath": {
+          "type": "string"
+        },
         "importDate": {
           "type": "string",
           "format": "date-time"

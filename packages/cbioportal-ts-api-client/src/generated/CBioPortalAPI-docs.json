@@ -3063,6 +3063,30 @@
         "deprecated": false
       }
     },
+    "/studies/overlapping_studies": {
+      "get": {
+        "tags": [
+          "Studies"
+        ],
+        "summary": "Get the study tags by IDs",
+        "operationId": "getStudiesWithOverlappingSamplesUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StudyOverlap"
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
     "/studies/tags/fetch": {
       "post": {
         "tags": [
@@ -7130,6 +7154,21 @@
         }
       },
       "title": "StructuralVariantFilter"
+    },
+    "StudyOverlap": {
+      "type": "object",
+      "properties": {
+        "overlappingStudyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "studyId": {
+          "type": "string"
+        }
+      },
+      "title": "StudyOverlap"
     },
     "StudyViewFilter": {
       "type": "object",
